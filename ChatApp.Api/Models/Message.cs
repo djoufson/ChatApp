@@ -1,5 +1,7 @@
 ﻿namespace ChatApp.Api.Models;
 
+[Index(nameof(ToUserId))]
+[Index(nameof(FromUserId))]
 public class Message
 {
     [Key] 

@@ -24,10 +24,18 @@ public class AccountController : ControllerBase
 	[HttpPost]
 	[Route("login")]
     [ValidateModel]
-	public async Task<ActionResult<UserDto>> Login(LoginDto loginInfos)
+	public async Task<ActionResult<LoginResponseDto>> Login(LoginDto loginInfos)
 	{
         var user = await _userManager.FindByEmailAsync(loginInfos.Email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, loginInfos.Password))
+        if (user is null) 
+            return BadRequest(new BaseResponseDto() 
+            { 
+                Status=false, 
+                StatusCode=StatusCodes.Status400BadRequest, 
+                Message = "The requested user does not exist"
+            });
+
+        if(await _userManager.CheckPasswordAsync(user, loginInfos.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -46,11 +54,15 @@ public class AccountController : ControllerBase
             if (token is null)
                 return Unauthorized();
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
-            });
+            return Ok(
+                new LoginResponseDto()
+                {
+                    User = _mapper.Map<UserDto>(user),
+                    Status = true,
+                    StatusCode = StatusCodes.Status200OK,
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo
+                });
         }
         return Unauthorized();
     }
@@ -59,21 +71,36 @@ public class AccountController : ControllerBase
     [HttpPost]
     [ValidateModel]
     [Route("register")]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerInfos)
+    public async Task<ActionResult<BaseResponseDto<UserDto>>> Register(RegisterDto registerInfos)
     {
         var userExists = await _userManager.FindByEmailAsync(registerInfos.Email);
         if (userExists is not null)
             return StatusCode(StatusCodes.Status403Forbidden, 
-                new BaseResponseDto { Status = false, Message = "User already exists!", StatusCode=0 });
+                new BaseResponseDto { Status = false, Message = $"User {registerInfos.Email} already exists!", StatusCode=0 });
 
         // Mapping the user according to the registration
         var user = _mapper.Map<AppUser>(registerInfos);
 
         var result = await _userManager.CreateAsync(user, registerInfos.Password);
         if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponseDto { Status = false, Message = "User creation failed! Please check user details and try again.", StatusCode = 500 });
+        {
+            var badRequestContent = new BaseResponseDto()
+            {
+                Status = false,
+                Errors = result.Errors.Select(e => e.Description).ToArray(),
+                Message = "User creation failed! Please check user details and try again.",
+                StatusCode = StatusCodes.Status400BadRequest,
+            };
 
-        return Ok(_mapper.Map<UserDto>(user));
+            return StatusCode(StatusCodes.Status400BadRequest, badRequestContent);
+        }
+
+        return Ok(new BaseResponseDto<UserDto>()
+        {
+            Data = _mapper.Map<UserDto>(user),
+            Status = true,
+            StatusCode = StatusCodes.Status200OK
+        });
     }
 
 
