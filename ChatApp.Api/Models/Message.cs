@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ChatApp.Api.Models;
+﻿namespace ChatApp.Api.Models;
 
 public class Message
 {
