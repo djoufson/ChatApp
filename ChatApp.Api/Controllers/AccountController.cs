@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ChatApp.Api.Utilities.Validation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.Api.Controllers;
 
@@ -22,6 +23,7 @@ public class AccountController : ControllerBase
 
 	[HttpPost]
 	[Route("login")]
+    [ValidateModel]
 	public async Task<ActionResult> Login(LoginDto loginInfos)
 	{
         var user = await _userManager.FindByEmailAsync(loginInfos.Email);

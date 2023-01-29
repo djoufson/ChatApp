@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,6 +14,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services
     .AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+// Add Controllers
+builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var result = new ValidationFailedResult(context.ModelState);
+        result.ContentTypes.Add(MediaTypeNames.Application.Json);
+
+        return result;
+    };
+});
 
 // Add Authentication
 builder.Services.AddAuthentication(options =>

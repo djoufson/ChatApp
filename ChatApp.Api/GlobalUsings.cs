@@ -14,3 +14,8 @@ global using System.Text;
 global using ChatApp.Api.Dtos.Requests;
 global using ChatApp.Api.Utilities;
 global using static ChatApp.Api.Utilities.Utils;
+global using Microsoft.AspNetCore.Mvc.ModelBinding;
+global using Microsoft.AspNetCore.Mvc.Filters;
+global using ChatApp.Api.Utilities.Validation;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using System.Net.Mime;
