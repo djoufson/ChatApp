@@ -19,3 +19,8 @@ global using Microsoft.AspNetCore.Mvc.Filters;
 global using ChatApp.Api.Utilities.Validation;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using System.Net.Mime;
+global using Microsoft.AspNetCore.Authorization;
+global using AutoMapper;
+global using ChatApp.Api.Dtos;
+global using ChatApp.Api.Dtos.Responses;
+global using ChatApp.Api.Profiles;
