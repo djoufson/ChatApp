@@ -33,5 +33,6 @@ public class UsersProfile : Profile
                 SecurityStamp = Guid.NewGuid().ToString(),
                 LastTimeOnline = DateTime.Now,
             });
+        CreateMap<UserDto, UserWithoutEntities>();
     }
 }

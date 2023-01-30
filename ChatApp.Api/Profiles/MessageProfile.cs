@@ -7,5 +7,6 @@ public class MessageProfile : Profile
 		// source -> target
 		CreateMap<Message, MessageDto>();
 		CreateMap<MessageDto, Message>();
-	}
+        CreateMap<MessageDto, MessageWithoutEntities>();
+    }
 }

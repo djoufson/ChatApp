@@ -35,25 +35,12 @@ public class AccountController : ControllerBase
                 Message = "The requested user does not exist"
             });
 
-        if(await _userManager.CheckPasswordAsync(user, loginInfos.Password))
+        var passwordCheck = await _userManager.CheckPasswordAsync(user, loginInfos.Password);
+        
+        if (passwordCheck)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
-
-            var token = GetToken(authClaims, _configuration);
-            if (token is null)
-                return Unauthorized();
-
+            var token = await CreateToken(user, _userManager, _configuration);
+            if (token is null) return Unauthorized();
             return Ok(
                 new LoginResponseDto()
                 {
@@ -109,23 +96,30 @@ public class AccountController : ControllerBase
     [Authorize]
     public async Task<ActionResult> Logout(LogoutDto logoutInfos)
     {
-        var userid = User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-        var user = await _userManager.FindByIdAsync(userid);
-        if(user is null) return Unauthorized(new BaseResponseDto
+        try
         {
-            Message = "Unauthorized",
-            Status = false,
-            StatusCode = StatusCodes.Status401Unauthorized,
-            Errors = new[] { "You are not authorized" }
-        });
-        var passwordCheck = await _userManager.CheckPasswordAsync(user, logoutInfos.Password);
-        if (!passwordCheck) return BadRequest(new BaseResponseDto()
+            var (uId, uEmail) = GetUserInfosByToken(User);
+            var user = await _userManager.FindByIdAsync(uId);
+            if(user is null) return Unauthorized(new BaseResponseDto
+            {
+                Message = "Unauthorized",
+                Status = false,
+                StatusCode = StatusCodes.Status401Unauthorized,
+                Errors = new[] { "You are not authorized" }
+            });
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, logoutInfos.Password);
+            if (!passwordCheck) return BadRequest(new BaseResponseDto()
+            {
+                Message = "Wong password",
+                Status = false,
+                StatusCode = StatusCodes.Status400BadRequest,
+                Errors = new[] {"The password you entered is not correct"}
+            });
+            return Ok(_mapper.Map<UserDto>(user));
+        }
+        catch (Exception e)
         {
-            Message = "Wong password",
-            Status = false,
-            StatusCode = StatusCodes.Status400BadRequest,
-            Errors = new[] {"The password you entered is not correct"}
-        });
-        return Ok(_mapper.Map<UserDto>(user));
+            return BadRequest(e.Message);
+        }
     }
 }

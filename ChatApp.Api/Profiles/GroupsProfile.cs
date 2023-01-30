@@ -7,6 +7,13 @@ public class GroupsProfile : Profile
         // source -> destination
 
         CreateMap<Group, GroupDto>();
-        CreateMap<GroupDto, Group>();
+        CreateMap<GroupDto, GroupWithoutEntities>();
+        CreateMap<GroupDto, Group>().ConstructUsing(src =>
+            new Group()
+            {
+                Id = src.Id,
+                Name = src.Name,
+            }
+        );
     }
 }

@@ -17,4 +17,5 @@ public class Message
     [ForeignKey(nameof(Group))] 
     public int? GroupId { get; set; } // The id of the related group if exists
     public Group? Group { get; set; } // The related group if exists
+    public DateTime SentAt { get; set; }
 }

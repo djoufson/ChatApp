@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230129061819_Update-Index-For-Message-Entity")]
-    partial class UpdateIndexForMessageEntity
+    [Migration("20230130004120_Update-Group-Model")]
+    partial class UpdateGroupModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,7 +122,7 @@ namespace ChatApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Group");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("ChatApp.Api.Models.Message", b =>
