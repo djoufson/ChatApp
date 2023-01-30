@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
 
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -107,8 +107,25 @@ public class AccountController : ControllerBase
     [HttpPost]
     [Route("logout")]
     [Authorize]
-    public ActionResult Logout(string password)
+    public async Task<ActionResult> Logout(LogoutDto logoutInfos)
     {
-        return Ok(1);
+        var userid = User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
+        var user = await _userManager.FindByIdAsync(userid);
+        if(user is null) return Unauthorized(new BaseResponseDto
+        {
+            Message = "Unauthorized",
+            Status = false,
+            StatusCode = StatusCodes.Status401Unauthorized,
+            Errors = new[] { "You are not authorized" }
+        });
+        var passwordCheck = await _userManager.CheckPasswordAsync(user, logoutInfos.Password);
+        if (!passwordCheck) return BadRequest(new BaseResponseDto()
+        {
+            Message = "Wong password",
+            Status = false,
+            StatusCode = StatusCodes.Status400BadRequest,
+            Errors = new[] {"The password you entered is not correct"}
+        });
+        return Ok(_mapper.Map<UserDto>(user));
     }
 }
