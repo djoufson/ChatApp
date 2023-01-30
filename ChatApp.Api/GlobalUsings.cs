@@ -23,4 +23,6 @@ global using System.Security.Claims;
 global using System.Text;
 global using static ChatApp.Api.Utilities.Authentication.Auth;
 global using static ChatApp.Shared.Utilities.Enums;
-
+global using ChatApp.Api.Utilities.Extentions;
+global using System.Collections.ObjectModel;
+global using static ChatApp.Api.Dtos.Responses.Handlers;

@@ -2,7 +2,7 @@
 {
     public class LoginResponseDto : BaseResponseDto
     {
-        public UserDto User { get; set; } = null!;
+        public UserWithoutEntities User { get; set; } = null!;
         public string Token { get; set; } = null!;
         public DateTime Expiration { get; set; }
     }

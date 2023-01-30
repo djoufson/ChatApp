@@ -1,7 +1,6 @@
-﻿using System.Collections.ObjectModel;
-namespace ChatApp.Api.Controllers;
+﻿namespace ChatApp.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
 public class GroupController : ControllerBase
@@ -28,42 +27,50 @@ public class GroupController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<GroupDto>> GetGroups()
+    public async Task<ActionResult<BaseResponseDto<IEnumerable<GroupWithoutEntities>>>> GetGroups()
     {
         var groups = await _dbContext
             .Groups
             .Include(g => g.Members)
             .ToArrayAsync();
         var groupsDto = _mapper.Map<GroupDto[]>(groups);
-        return Ok(_mapper.Map<GroupWithoutEntities[]>(groupsDto));
+        return Ok(MyOk(_mapper.Map<GroupWithoutEntities[]>(groupsDto)));
     }
 
 
     [HttpGet]
-    [Route("{id}/user")]
-    public async Task<ActionResult<IEnumerable<UserWithoutEntities>>> GetUsers(int id)
+    [Route("{id:int}")]
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> GetSingleGroup(int id)
+    {
+        var groups = await _dbContext
+            .Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        return Ok(MyOk(groups?.WithoutEntities(_mapper)));
+    }
+
+
+    [HttpGet]
+    [Route("{id:int}/user")]
+    public async Task<ActionResult<BaseResponseDto<IEnumerable<BaseResponseDto<UserWithoutEntities>>>>> GetUsers(int id)
     {
         var group = await _dbContext
             .Groups
             .Include(c => c.Members)
             .FirstOrDefaultAsync(c => c.Id == id);
 
-        if (group is null) return BadRequest();
+        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
         var membersDto = _mapper.Map<ICollection<UserDto>>(group.Members);
         var members = _mapper.Map<ICollection<UserWithoutEntities>>(membersDto);
-        return Ok(members);
+        return Ok(MyOk(members, "Success"));
     }
 
 
     [HttpPost]
-    public async Task<ActionResult<GroupDto>> CreateGroup(AddGroupDto groupRequest)
+    public async Task<ActionResult<BaseResponseDto<GroupDto>>> CreateGroup(AddGroupDto groupRequest)
     {
-        if (groupRequest is null) return BadRequest(new BaseResponseDto
-        {
-            Status = false,
-            StatusCode = StatusCodes.Status400BadRequest,
-            Message = "Bad Request"
-        });
+        if (groupRequest is null) return BadRequest(MyBadRequest("There are no given parameters"));
 
         var usersEmails = groupRequest.MembersMailAddresses;
         var members = await GetUsersByEmailsAsync(usersEmails, _userManager);
@@ -71,7 +78,7 @@ public class GroupController : ControllerBase
         {
             Name = groupRequest.Name,
         };
-        if (members is null) return BadRequest();
+        if (members is null) return BadRequest(MyBadRequest("The requested users to add do not exist"));
         group.Members = new Collection<AppUser>();
 
         foreach (var member in members)
@@ -80,45 +87,42 @@ public class GroupController : ControllerBase
         _dbContext.Add(group);
 
         _dbContext.SaveChanges();
-        var groupDto = _mapper.Map<GroupDto>(group);
 
-        return Ok(_mapper.Map<GroupWithoutEntities>(groupDto));
+        return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
 
 
     [HttpPost]
-    [Route("{id}/user")]
-    public async Task<ActionResult<GroupWithoutEntities>> AddSingleUserToGroup(int id, EmailDto email)
+    [Route("{id:int}/user")]
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> AddSingleUserToGroup(int id, EmailDto email)
     {
         var group = await _dbContext.Groups
             .Include(g => g.Members)
             .FirstOrDefaultAsync(g => g.Id == id);
 
-        if (group is null) return BadRequest();
+        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
 
         var user = await _userManager.FindByEmailAsync(email.Email);
-        if (user is null) return BadRequest();
+        if (user is null) return BadRequest(MyBadRequest("The requested user to add does not exist"));
 
-        if(group.Members.Contains(user)) return BadRequest();
+        if(group.Members.Contains(user)) return BadRequest(MyBadRequest("The requested user to add is already member of this group"));
 
         group.Members.Add(user);
         _dbContext.SaveChanges();
 
-        var groupDto = _mapper.Map<GroupDto>(group);
-        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
-        return Ok(responseGroup);
+        return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
 
 
     [HttpPost]
-    [Route("{id}/user/multiple")]
-    public async Task<ActionResult<GroupWithoutEntities>> AddMultipleUsersToGroup(int id, [Required] string[] emails)
+    [Route("{id:int}/user/multiple")]
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> AddMultipleUsersToGroup(int id, [Required] string[] emails)
     {
         var group = await _dbContext.Groups
             .Include(g => g.Members)
             .FirstOrDefaultAsync(g => g.Id == id);
 
-        if (group is null) return BadRequest();
+        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
         var users = new AppUser[emails.Length];
         for (int i = 0; i < emails.Length; i++)
         {
@@ -130,42 +134,40 @@ public class GroupController : ControllerBase
 
         _dbContext.SaveChanges();
 
-        var groupDto = _mapper.Map<GroupDto>(group);
-        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
-        return Ok(responseGroup);
+        return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
 
 
     [HttpDelete]
-    [Route("{id}")]
-    public async Task<ActionResult> DeleteGroup(int id)
+    [Route("{id:int}")]
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> DeleteGroup(int id)
     {
         var group = await _dbContext.FindAsync<Group>(id);
-        if (group is null) return BadRequest();
+        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
 
         _dbContext.Groups.Remove(group);
         await _dbContext.SaveChangesAsync();
 
-        return Ok(group);
+        return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
 
 
     [HttpDelete]
-    [Route("{id}/user")]
-    public async Task<ActionResult> RemoveUserFromGroup(int id, [Required] string email)
+    [Route("{id:int}/user")]
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> RemoveUserFromGroup(int id, [Required] string email)
     {
         var group = await _dbContext.Groups
             .Include(g => g.Members)
             .FirstOrDefaultAsync(g => g.Id == id);
 
-        if (group is null) return BadRequest();
+        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
 
         var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null) return BadRequest(MyBadRequest("The requested user does not exist"));
         group.Members.Remove(user);
         await _dbContext.SaveChangesAsync();
 
-        var groupDto = _mapper.Map<GroupDto>(group);
-        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
-        return Ok(responseGroup);
+        return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
 }
