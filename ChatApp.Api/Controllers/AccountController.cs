@@ -98,7 +98,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var (uId, uEmail) = GetUserInfosByToken(User);
+            var (uId, uEmail) = GetUserInfos(User);
             var user = await _userManager.FindByIdAsync(uId);
             if(user is null) return Unauthorized(new BaseResponseDto
             {

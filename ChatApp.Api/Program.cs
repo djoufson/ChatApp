@@ -5,6 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddTransient<IMyHttpClient, MyHttpClient>(service =>
+{
+    var client = new MyHttpClient();
+    client.UseBaseUrl("https://google.com/api");
+    client.UseTimeOut(30);
+    return client;
+});
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 

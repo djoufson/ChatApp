@@ -34,5 +34,6 @@ public class UsersProfile : Profile
                 LastTimeOnline = DateTime.Now,
             });
         CreateMap<UserDto, UserWithoutEntities>();
+        CreateMap<UserWithoutEntities, UserDto>();
     }
 }

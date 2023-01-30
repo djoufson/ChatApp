@@ -25,4 +25,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatApp.Shared\ChatApp.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

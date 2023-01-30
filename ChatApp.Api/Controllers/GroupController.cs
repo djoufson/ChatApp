@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-
 namespace ChatApp.Api.Controllers;
 
 [Route("api/[controller]")]
@@ -10,17 +9,20 @@ public class GroupController : ControllerBase
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
     private readonly AppDbContext _dbContext;
+    private readonly IMyHttpClient _httpClient;
     private readonly IConfiguration _configuration;
 
     public GroupController(
         UserManager<AppUser> userManager,
         AppDbContext dbContext,
+        IMyHttpClient client,
         IConfiguration configuration,
         IMapper mapper)
     {
         _mapper = mapper;
         _userManager = userManager;
         _dbContext = dbContext;
+        _httpClient = client;
         _configuration = configuration;
     }
 
@@ -36,12 +38,22 @@ public class GroupController : ControllerBase
         return Ok(_mapper.Map<GroupWithoutEntities[]>(groupsDto));
     }
 
+
     [HttpGet]
-    [Route("{id}/users")]
-    public ActionResult GetUsers(int id)
+    [Route("{id}/user")]
+    public async Task<ActionResult<IEnumerable<UserWithoutEntities>>> GetUsers(int id)
     {
-        return Ok(id);
+        var group = await _dbContext
+            .Groups
+            .Include(c => c.Members)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (group is null) return BadRequest();
+        var membersDto = _mapper.Map<ICollection<UserDto>>(group.Members);
+        var members = _mapper.Map<ICollection<UserWithoutEntities>>(membersDto);
+        return Ok(members);
     }
+
 
     [HttpPost]
     public async Task<ActionResult<GroupDto>> CreateGroup(AddGroupDto groupRequest)
@@ -53,8 +65,8 @@ public class GroupController : ControllerBase
             Message = "Bad Request"
         });
 
-        var usersIds = groupRequest.MembersMailAddresses;
-        var members = await GetUsersByIdsAsync(usersIds);
+        var usersEmails = groupRequest.MembersMailAddresses;
+        var members = await GetUsersByEmailsAsync(usersEmails, _userManager);
         var group = new Group()
         {
             Name = groupRequest.Name,
@@ -73,31 +85,59 @@ public class GroupController : ControllerBase
         return Ok(_mapper.Map<GroupWithoutEntities>(groupDto));
     }
 
-    async Task<AppUser[]> GetUsersByIdsAsync(IEnumerable<string> ids)
+
+    [HttpPost]
+    [Route("{id}/user")]
+    public async Task<ActionResult<GroupWithoutEntities>> AddSingleUserToGroup(int id, EmailDto email)
     {
-        var users = new List<AppUser>();
-        foreach (var id in ids)
+        var group = await _dbContext.Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group is null) return BadRequest();
+
+        var user = await _userManager.FindByEmailAsync(email.Email);
+        if (user is null) return BadRequest();
+
+        if(group.Members.Contains(user)) return BadRequest();
+
+        group.Members.Add(user);
+        _dbContext.SaveChanges();
+
+        var groupDto = _mapper.Map<GroupDto>(group);
+        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
+        return Ok(responseGroup);
+    }
+
+
+    [HttpPost]
+    [Route("{id}/user/multiple")]
+    public async Task<ActionResult<GroupWithoutEntities>> AddMultipleUsersToGroup(int id, [Required] string[] emails)
+    {
+        var group = await _dbContext.Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group is null) return BadRequest();
+        var users = new AppUser[emails.Length];
+        for (int i = 0; i < emails.Length; i++)
         {
-            users.Add(await _userManager.FindByEmailAsync(id));
+            users[i] = await _userManager.FindByEmailAsync(emails[i]);
+            if (users[i] is null) continue;
+            if (group.Members.Contains(users[i])) continue;
+            group.Members.Add(users[i]);
         }
-        return users.ToArray();
+
+        _dbContext.SaveChanges();
+
+        var groupDto = _mapper.Map<GroupDto>(group);
+        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
+        return Ok(responseGroup);
     }
 
-    [HttpPost]
-    [Route("add-user")]
-    public ActionResult AddSingleUserToGroup()
-    {
-        return Ok();
-    }
-
-    [HttpPost]
-    [Route("add-user/multiple")]
-    public ActionResult AddMultipleUsersToGroup()
-    {
-        return Ok();
-    }
 
     [HttpDelete]
+    [Route("{id}")]
     public async Task<ActionResult> DeleteGroup(int id)
     {
         var group = await _dbContext.FindAsync<Group>(id);
@@ -107,5 +147,25 @@ public class GroupController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
         return Ok(group);
+    }
+
+
+    [HttpDelete]
+    [Route("{id}/user")]
+    public async Task<ActionResult> RemoveUserFromGroup(int id, [Required] string email)
+    {
+        var group = await _dbContext.Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group is null) return BadRequest();
+
+        var user = await _userManager.FindByEmailAsync(email);
+        group.Members.Remove(user);
+        await _dbContext.SaveChangesAsync();
+
+        var groupDto = _mapper.Map<GroupDto>(group);
+        var responseGroup = _mapper.Map<GroupWithoutEntities>(groupDto);
+        return Ok(responseGroup);
     }
 }
