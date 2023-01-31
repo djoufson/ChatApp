@@ -23,20 +23,20 @@ public class MessagesController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult Messages()
+    [Route("/{id:int}")]
+    public ActionResult GetMessagesFromAGroup()
     {
         return Ok(1);
     }
 
     [HttpPost]
-    [Route("send/to")]
     public ActionResult SendToSingle()
     {
         return Ok();
     }
 
     [HttpPost]
-    [Route("send/to/group")]
+    [Route("group")]
     public ActionResult SendToGroup()
     {
         return Ok();

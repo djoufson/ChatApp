@@ -53,7 +53,7 @@ public class GroupController : ControllerBase
 
     [HttpGet]
     [Route("{id:int}/user")]
-    public async Task<ActionResult<BaseResponseDto<IEnumerable<BaseResponseDto<UserWithoutEntities>>>>> GetUsers(int id)
+    public async Task<ActionResult<BaseResponseDto<IEnumerable<UserWithoutEntities>>>> GetUsers(int id)
     {
         var group = await _dbContext
             .Groups
