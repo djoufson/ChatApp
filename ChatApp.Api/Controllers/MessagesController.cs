@@ -23,10 +23,25 @@ public class MessagesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/{id:int}")]
-    public ActionResult GetMessagesFromAGroup()
+    [Route("")]
+    public async Task<ActionResult<IEnumerable<MessageWithoutEntities>>> GetMessages()
     {
-        return Ok(1);
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Bad Request", e.Message)); }
+        var messages = await _dbContext.Messages
+            .Where(m => m.ToUserId == user.Id || m.FromUserId == user.Id)
+            .ToArrayAsync();
+        var messagesDto = _mapper.Map<MessageDto[]>(messages);
+
+        return Ok(MyOk(_mapper
+            .Map<MessageWithoutEntities[]>(messagesDto)
+            .OrderBy(m => m.SentAt)));
     }
 
     [HttpPost]
@@ -74,9 +89,40 @@ public class MessagesController : ControllerBase
     }
 
     [HttpPost]
-    [Route("group")]
-    public ActionResult SendToGroup()
+    [Route("group/{id:int}")]
+    public async Task<ActionResult<MessageWithoutEntities>> SendToGroup([Required] int id, SendMessageToGroupDto message)
     {
-        return Ok();
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
+
+        var group = await _dbContext
+            .Groups
+            .Include(g => g.Members)
+            .Include(g => g.Messages)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if(group is null) { return BadRequest(MyBadRequest("Bad Request", "The supplied group does not exist")); }
+
+        if(!group.Members.Contains(user)) return Unauthorized(MyBadRequest("Unauthorized", "You are not a member of this group"));
+
+        var messageEntity = new Message
+        {
+            Content = message.Content,
+            Group = group,
+            GroupId = group.Id,
+            FromUserId = user.Id,
+            SentAt = DateTime.Now
+        };
+
+        group.Messages ??= new Collection<Message>();
+        group.Messages.Add(messageEntity);
+        await _dbContext.SaveChangesAsync();
+        return Ok(MyOk(messageEntity.WithoutEntities(_mapper), Message: "Message sent successfuly"));
     }
 }

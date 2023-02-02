@@ -63,7 +63,11 @@ public static class Auth
         var users = new List<AppUser>();
         foreach (var id in emails)
         {
-            users.Add(await userManager.FindByEmailAsync(id));
+            var user = await userManager.FindByEmailAsync(id);
+            if (user is null)
+                continue;
+
+            users.Add(user);
         }
         return users.ToArray();
     }
