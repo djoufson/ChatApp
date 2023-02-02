@@ -12,6 +12,7 @@ public class Message
     [ForeignKey(nameof(AppUser))]
     public string ToUserId { get; set; } = null!;
     public string Content { get; set; } = null!;
+    public Conversation? Conversation { get; set; }
 
     [ForeignKey(nameof(Group))] 
     public int? GroupId { get; set; } // The id of the related group if exists

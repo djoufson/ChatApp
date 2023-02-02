@@ -77,6 +77,13 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+if(args.Length > 0)
+{
+    if(args[0].ToLower().Equals("seed"))
+        app.SeedData();
+    if (args[0].ToLower().Equals("reset"))
+        app.ResetData();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

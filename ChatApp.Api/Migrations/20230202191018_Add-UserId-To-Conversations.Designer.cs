@@ -4,6 +4,7 @@ using ChatApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230202191018_Add-UserId-To-Conversations")]
+    partial class AddUserIdToConversations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace ChatApp.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AppUserConversation", b =>
-                {
-                    b.Property<int>("ConversationsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ParticipentsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ConversationsId", "ParticipentsId");
-
-                    b.HasIndex("ParticipentsId");
-
-                    b.ToTable("AppUserConversation");
-                });
 
             modelBuilder.Entity("AppUserGroup", b =>
                 {
@@ -131,10 +119,16 @@ namespace ChatApp.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("WithUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Conversations");
                 });
@@ -331,21 +325,6 @@ namespace ChatApp.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppUserConversation", b =>
-                {
-                    b.HasOne("ChatApp.Api.Models.Conversation", null)
-                        .WithMany()
-                        .HasForeignKey("ConversationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ChatApp.Api.Models.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AppUserGroup", b =>
                 {
                     b.HasOne("ChatApp.Api.Models.Group", null)
@@ -361,17 +340,22 @@ namespace ChatApp.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChatApp.Api.Models.Conversation", b =>
+                {
+                    b.HasOne("ChatApp.Api.Models.AppUser", null)
+                        .WithMany("Conversations")
+                        .HasForeignKey("AppUserId");
+                });
+
             modelBuilder.Entity("ChatApp.Api.Models.Message", b =>
                 {
-                    b.HasOne("ChatApp.Api.Models.Conversation", "Conversation")
+                    b.HasOne("ChatApp.Api.Models.Conversation", null)
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId");
 
                     b.HasOne("ChatApp.Api.Models.Group", "Group")
                         .WithMany("Messages")
                         .HasForeignKey("GroupId");
-
-                    b.Navigation("Conversation");
 
                     b.Navigation("Group");
                 });
@@ -425,6 +409,11 @@ namespace ChatApp.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ChatApp.Api.Models.AppUser", b =>
+                {
+                    b.Navigation("Conversations");
                 });
 
             modelBuilder.Entity("ChatApp.Api.Models.Conversation", b =>

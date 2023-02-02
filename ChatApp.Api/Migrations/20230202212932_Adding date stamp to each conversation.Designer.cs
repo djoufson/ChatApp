@@ -4,6 +4,7 @@ using ChatApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230202212932_Adding date stamp to each conversation")]
+    partial class Addingdatestamptoeachconversation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,15 +366,13 @@ namespace ChatApp.Api.Migrations
 
             modelBuilder.Entity("ChatApp.Api.Models.Message", b =>
                 {
-                    b.HasOne("ChatApp.Api.Models.Conversation", "Conversation")
+                    b.HasOne("ChatApp.Api.Models.Conversation", null)
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId");
 
                     b.HasOne("ChatApp.Api.Models.Group", "Group")
                         .WithMany("Messages")
                         .HasForeignKey("GroupId");
-
-                    b.Navigation("Conversation");
 
                     b.Navigation("Group");
                 });
