@@ -9,4 +9,5 @@ public class UserDto
     public ICollection<MessageDto>? Messages { get; set; }
     public ICollection<GroupDto>? Groups { get; set; }
     public DateTime? LastTimeOnline { get; set; }
+    public ICollection<ConversationDto>? Conversations { get; internal set; }
 }

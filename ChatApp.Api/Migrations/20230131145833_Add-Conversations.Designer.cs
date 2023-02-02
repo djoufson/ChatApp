@@ -4,6 +4,7 @@ using ChatApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230131145833_Add-Conversations")]
+    partial class AddConversations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,6 +122,14 @@ namespace ChatApp.Api.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("User1Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User2Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
@@ -151,6 +162,9 @@ namespace ChatApp.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -173,6 +187,8 @@ namespace ChatApp.Api.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("ConversationId");
 
@@ -342,6 +358,10 @@ namespace ChatApp.Api.Migrations
 
             modelBuilder.Entity("ChatApp.Api.Models.Message", b =>
                 {
+                    b.HasOne("ChatApp.Api.Models.AppUser", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("AppUserId");
+
                     b.HasOne("ChatApp.Api.Models.Conversation", null)
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId");
@@ -407,6 +427,8 @@ namespace ChatApp.Api.Migrations
             modelBuilder.Entity("ChatApp.Api.Models.AppUser", b =>
                 {
                     b.Navigation("Conversations");
+
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("ChatApp.Api.Models.Conversation", b =>

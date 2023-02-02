@@ -7,4 +7,5 @@ public class UserWithoutEntities
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public DateTime? LastTimeOnline { get; set; }
+    public ICollection<ConversationWithoutEntities>? Conversations { get; set; }
 }

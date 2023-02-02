@@ -1,12 +1,10 @@
-﻿namespace ChatApp.Api.Dtos;
+﻿namespace ChatApp.Console.Models;
 
-public class MessageDto
+public class Message
 {
     public int Id { get; set; }
+    public int ConversationId { get; set; }
     public string FromUserId { get; set; } = null!;
     public string ToUserId { get; set; } = null!;
     public string Content { get; set; } = null!;
-    public int? GroupId { get; set; }
-    public GroupDto? Group { get; set; }
-    public DateTime SentAt { get; set; }
 }

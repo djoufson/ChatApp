@@ -11,7 +11,6 @@ public class Message
     public string FromUserId { get; set; } = null!;
     [ForeignKey(nameof(AppUser))]
     public string ToUserId { get; set; } = null!;
-    public AppUser FromUser { get; set; } = null!;
     public string Content { get; set; } = null!;
 
     [ForeignKey(nameof(Group))] 

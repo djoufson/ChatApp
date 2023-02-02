@@ -19,8 +19,8 @@ public class UsersProfile : Profile
 				UserName = src.UserName,
 				Email = src.Email,
 				PhoneNumber = src.PhoneNumber,
-				Messages = mapper.Map<ICollection<Message>>(src.Messages),
 				Groups = mapper.Map<ICollection<Group>>(src.Groups),
+                Conversations = mapper.Map<ICollection<Conversation>>(src.Conversations),
 				LastTimeOnline = src.LastTimeOnline,
 			});
 
