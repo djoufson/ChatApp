@@ -1,4 +1,7 @@
-﻿namespace ChatApp.Mobile;
+﻿using ChatApp.Mobile.Services.SignalR.Concrete;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace ChatApp.Mobile;
 
 public static class MauiProgram
 {
@@ -13,6 +16,8 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		return builder.Build();
+		builder.Services.AddSingleton<IMessageConnection, MessageConnection>();
+        builder.Services.AddTransient<MainPage>();
+        return builder.Build();
 	}
 }

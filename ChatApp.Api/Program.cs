@@ -1,6 +1,3 @@
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +10,8 @@ builder.Services.AddTransient<IMyHttpClient, MyHttpClient>(service =>
     return client;
 });
 
+// Add SignalR functionalities
+builder.Services.AddSignalR();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -99,5 +98,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map hub endpoints
+app.MapHub<MessagesHub>("/messages");
 
 app.Run();

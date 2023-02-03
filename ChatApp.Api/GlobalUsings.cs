@@ -26,3 +26,6 @@ global using static ChatApp.Shared.Utilities.Enums;
 global using ChatApp.Api.Utilities.Extentions;
 global using System.Collections.ObjectModel;
 global using static ChatApp.Api.Dtos.Responses.Handlers;
+global using ChatApp.Api.Hubs;
+global using Microsoft.OpenApi.Models;
+global using Swashbuckle.AspNetCore.Filters;
