@@ -1,4 +1,6 @@
-﻿namespace ChatApp.Mobile.Services.SignalR.Concrete;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+
+namespace ChatApp.Mobile.Services.SignalR.Concrete;
 
 internal class MessageConnection : IMessageConnection
 {

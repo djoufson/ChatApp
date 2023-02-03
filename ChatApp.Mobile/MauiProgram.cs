@@ -1,10 +1,4 @@
-﻿using ChatApp.Mobile.Pages;
-using ChatApp.Mobile.Services.SignalR.Concrete;
-using ChatApp.Mobile.ViewModels;
-using CommunityToolkit.Maui;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace ChatApp.Mobile;
+﻿namespace ChatApp.Mobile;
 
 public static class MauiProgram
 {
@@ -20,6 +14,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 		builder.Services.RegisterHubConnections();
+		builder.Services.RegisterServices();
         builder.Services.RegisterViewModels();
 		builder.Services.RegisterPages();
         return builder.Build();
@@ -29,7 +24,16 @@ public static class MauiProgram
 	private static IServiceCollection RegisterPages(this IServiceCollection services)
 	{
 		services.AddTransient<LoginPage>();
-		return services;
+        services.AddSingleton<HomePage>();
+        return services;
+	}
+
+	// Services
+	private static IServiceCollection RegisterServices(this IServiceCollection services)
+	{
+		services.AddSingleton<ShellNavigationService>();
+        services.AddSingleton<User>();
+        return services;
 	}
 
 	// Viewmodels
@@ -37,6 +41,7 @@ public static class MauiProgram
     {
         services.AddTransient<BaseViewModel>();
         services.AddSingleton<LoginViewModel>();
+        services.AddSingleton<HomeViewModel>();
         return services;
     }
 

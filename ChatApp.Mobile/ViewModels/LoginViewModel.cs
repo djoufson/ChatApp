@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using System.Diagnostics;
+﻿using ChatApp.Mobile.Extensions;
+using ChatApp.Mobile.Services.Device;
 
 namespace ChatApp.Mobile.ViewModels;
 
@@ -8,8 +8,15 @@ public partial class LoginViewModel : BaseViewModel
     [ObservableProperty] private string _userEmail;
     [ObservableProperty] private string _userPassword;
     [ObservableProperty] private bool _isBusy;
-    public LoginViewModel()
+    private readonly User _user;
+    private readonly ShellNavigationService _shell;
+
+    public LoginViewModel(
+        ShellNavigationService shell,
+        User user)
     {
+        _user = user;
+        _shell = shell;
     }
 
     [RelayCommand]
@@ -23,12 +30,16 @@ public partial class LoginViewModel : BaseViewModel
         };
         try
         {
-            var response = await MyClient.SendRequestAsync<object>(MyHttpMethods.POST, "account/login", content: content);
+            var response = await MyClient.SendRequestAsync<LoginResponseDto>(MyHttpMethods.POST, "account/login", content: content);
             if (response is null)
             {
                 IsBusy = false;
+                await _shell.Current.DisplayAlert("Error", "Wrong Credentials", "OK");
                 return;
             }
+            AuthToken = response.Token;
+            _user.DeepCopy(response.User);
+            await _shell.GoToAsync("///HomePage");
             IsBusy = false;
         }
         catch(Exception e)

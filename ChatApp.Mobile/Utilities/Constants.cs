@@ -1,6 +1,7 @@
 ﻿namespace ChatApp.Mobile.Utilities;
 
-internal class Constants
+public class Constants
 {
-    internal const string BaseUrl = "api/v1/";
+    public const string BaseUrl = "api/v1/";
+    public const string AuthTokenKey = "Auth_Token";
 }

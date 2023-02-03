@@ -4,6 +4,20 @@ namespace ChatApp.Mobile.Helper;
 
 public class MyClient
 {
+    /// <summary>
+    /// Used to send a basic Http request
+    /// </summary>
+    /// <typeparam name="T">The expected return type</typeparam>
+    /// <param name="method">The Http Method used with the request</param>
+    /// <param name="url">The relative url endpoint</param>
+    /// <param name="content">The request body</param>
+    /// <param name="auth">The Bearer authentication token</param>
+    /// <returns>The response of the sent request, parsed into the generic T type</returns>
+    /// <exception cref="HttpRequestException"></exception>
+    /// <exception cref="TaskCanceledException"></exception>
+    /// <exception cref="UriFormatException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentNullException"></exception>
     public static async Task<T> SendRequestAsync<T>(MyHttpMethods method, string url, Dictionary<string, string> content = null, string auth = null)
     {
 #if DEBUG
@@ -21,7 +35,6 @@ public class MyClient
 
         if (content != null)
             stringContent = JsonContent.Create(content);
-
         HttpResponseMessage httpResponseMessage = null!;
         switch (method)
         {

@@ -4,11 +4,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:ChatApp.Mobile.Pages"
+    xmlns:appPages="clr-namespace:ChatApp.Mobile.Pages.App"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Home"
+        Title="Login"
         ContentTemplate="{DataTemplate pages:LoginPage}"
-        Route="MainPage" />
+        Route="LoginPage" />
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate appPages:HomePage}"
+        Route="HomePage" />
 
 </Shell>
