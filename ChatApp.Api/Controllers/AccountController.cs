@@ -1,6 +1,4 @@
-﻿using ChatApp.Api.Utilities.Extentions;
-
-namespace ChatApp.Api.Controllers;
+﻿namespace ChatApp.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]

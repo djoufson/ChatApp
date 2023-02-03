@@ -13,8 +13,9 @@ internal class MessageConnection : IMessageConnection
 			.WithUrl("https://localhost:7177/messages")
         #endif
             .Build();
-
-        _connection.On<string>("MessageRecieved", MessageRecieved);
+        
+        Task.Run(async () => await ConnectAsync());
+        _connection.On<string>(EventNames.MessageRecieved, MessageRecieved);
     }
     private void MessageRecieved(string message)
     {
@@ -32,6 +33,6 @@ internal class MessageConnection : IMessageConnection
 
     public Task SendMessageAsync(string text)
     {
-        return _connection.InvokeCoreAsync("SendMessage", new[] { text });
+        return _connection.InvokeCoreAsync(EventNames.SendMessage, new[] { text });
     }
 }

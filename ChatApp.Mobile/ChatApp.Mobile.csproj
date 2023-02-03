@@ -50,11 +50,19 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\ChatApp.Shared\ChatApp.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\LoginPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

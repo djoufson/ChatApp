@@ -34,7 +34,6 @@ public static class Handlers
         };
     }
 
-
     public static BaseResponseDto MyUnauthorized(string Message, params string[] errors)
     {
         return new BaseResponseDto()

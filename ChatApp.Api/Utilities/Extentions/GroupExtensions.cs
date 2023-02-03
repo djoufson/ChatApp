@@ -1,6 +1,4 @@
-﻿using ChatApp.Api.Dtos;
-
-namespace ChatApp.Api.Utilities.Extentions;
+﻿namespace ChatApp.Api.Utilities.Extentions;
 
 public static class GroupExtensions
 {

@@ -24,6 +24,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDatabase"));
 });
 
+builder.Services.AddDbContext<CacheContext>(options =>
+{
+    options.UseInMemoryDatabase("Cache");
+});
+
 builder.Services
     .AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -59,6 +64,18 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = builder.Configuration["JWT:ValidAudience"],
             ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        };
+
+        // Handle connections authentication to SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["eccess_token"];
+                if (!string.IsNullOrEmpty(accessToken))
+                    context.Token = accessToken;
+                return Task.CompletedTask;
+            }
         };
     });
 

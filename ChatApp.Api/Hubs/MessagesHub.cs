@@ -1,22 +1,49 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ChatApp.Shared.Utilities;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.Api.Hubs;
 
+[Authorize]
 public class MessagesHub : Hub
 {
-    public async Task SendMessage(string message)
+    private readonly CacheContext _cacheContext;
+    private readonly UserManager<AppUser> _userManager;
+
+    public MessagesHub(CacheContext cacheContext, UserManager<AppUser> userManager)
     {
-        Console.WriteLine(message);
-        await Clients.All.SendAsync("MessageRecieved", message);
+        _cacheContext = cacheContext;
+        _userManager = userManager;
+    }
+    public async Task SendMessage(string message, string toUserMail)
+    {
+        var connectionId = await _cacheContext.Connections
+            .Where(c => c.UserEmail == toUserMail)
+            .Select(c => c.ConnectionId)
+            .FirstOrDefaultAsync();
+        if (connectionId is null) return;
+        await Clients.Client(connectionId).SendAsync(EventNames.MessageRecieved, message);
     }
 
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
-        return base.OnConnectedAsync();
+        await base.OnConnectedAsync();
+        var (_, email) = GetUserInfos(Context.User!);
+        var user = await _userManager.FindByEmailAsync(email);
+        if(user is null) return;
+        await _cacheContext.Connections.AddAsync(new ChatUserConnection()
+        {
+            ConnectionId = Context.ConnectionId,
+            UserEmail = email
+        });
+        _cacheContext.SaveChanges();
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        return base.OnDisconnectedAsync(exception);
+        await base.OnDisconnectedAsync(exception);
+        var connection = await _cacheContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
+        if(connection is null) return;
+        _cacheContext.Connections.Remove(connection);
+        _cacheContext.SaveChanges();
     }
 }

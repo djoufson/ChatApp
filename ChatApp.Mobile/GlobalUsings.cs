@@ -6,3 +6,5 @@ global using System.Text;
 global using static ChatApp.Shared.Utilities.Enums;
 global using Microsoft.AspNetCore.SignalR.Client;
 global using ChatApp.Mobile.Services.SignalR.Interfaces;
+global using ChatApp.Shared.Utilities;
+global using CommunityToolkit.Mvvm.ComponentModel;

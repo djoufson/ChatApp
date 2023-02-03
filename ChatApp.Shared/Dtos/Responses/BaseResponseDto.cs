@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Api.Dtos.Responses;
+﻿namespace ChatApp.Shared.Dtos.Responses;
 
 public class BaseResponseDto
 {

@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Api.Dtos.Requests;
+﻿namespace ChatApp.Shared.Dtos.Requests;
 
 public class AddGroupDto
 {

@@ -1,12 +1,14 @@
-﻿namespace ChatApp.Api.Dtos;
+﻿namespace ChatApp.Shared.Dtos;
 
-public class MessageWithoutEntities
+public class MessageDto
 {
     public int Id { get; set; }
     public string FromUserId { get; set; } = null!;
     public string? ToUserId { get; set; }
     public string Content { get; set; } = null!;
     public int? ConversationId { get; set; }
+    public ConversationDto? Conversation { get; set; }
     public int? GroupId { get; set; }
+    public GroupDto? Group { get; set; }
     public DateTime SentAt { get; set; }
 }

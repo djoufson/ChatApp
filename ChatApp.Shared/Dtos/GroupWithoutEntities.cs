@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Api.Dtos;
+﻿namespace ChatApp.Shared.Dtos;
 
 public class GroupWithoutEntities
 {
