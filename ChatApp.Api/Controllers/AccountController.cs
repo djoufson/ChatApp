@@ -103,4 +103,32 @@ public class AccountController : ControllerBase
             return BadRequest(MyBadRequest(e.Message, e.Message));
         }
     }
+
+
+    [HttpPut]
+    [Route("device-token")]
+    [Authorize]
+    public async Task<ActionResult<BaseResponseDto<UserWithoutEntities>>> UpdateDeviceToken(UpdateDeviceTokenDto logoutInfos)
+    {
+        try
+        {
+            var (uId, uEmail) = GetUserInfos(User);
+            var user = await _userManager.FindByIdAsync(uId);
+            if (user is null) return Unauthorized(new BaseResponseDto
+            {
+                Message = "Unauthorized",
+                Status = false,
+                StatusCode = StatusCodes.Status401Unauthorized,
+                Errors = new[] { "You are not authorized" }
+            });
+
+            user.DeviceToken = logoutInfos.DeviceToken;
+            _dbContext.SaveChanges();
+            return Ok(MyOk(user.WithoutEntities(_mapper)));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(MyBadRequest(e.Message, e.Message));
+        }
+    }
 }

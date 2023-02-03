@@ -39,6 +39,17 @@ public partial class LoginViewModel : BaseViewModel
             }
             AuthToken = response.Token;
             _user.DeepCopy(response.User);
+
+            content = new()
+            {
+                {"deviceToken", DeviceToken},
+            };
+            var updateResponse = await MyClient.SendRequestAsync<LoginResponseDto>(
+                method: MyHttpMethods.PUT, 
+                url: "account/device-token", 
+                content: content, 
+                auth: AuthToken);
+
             await _shell.GoToAsync("///HomePage");
             IsBusy = false;
         }

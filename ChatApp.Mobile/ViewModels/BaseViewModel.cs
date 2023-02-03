@@ -9,6 +9,12 @@ public partial class BaseViewModel : ObservableObject
         set => Preferences.Set(Constants.AuthTokenKey, value); 
     }
 
+    public static string DeviceToken
+    {
+        get => Preferences.Get(Constants.DeviceTokenKey, "");
+        set => Preferences.Set(Constants.DeviceTokenKey, value);
+    }
+
     public BaseViewModel()
     {
         var chatConnection = Application.Current.Handler.MauiContext.Services.GetRequiredService<IMessageConnection>();

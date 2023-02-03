@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "426388601702",
+    "project_id": "is-chat-app-1e3e5",
+    "storage_bucket": "is-chat-app-1e3e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426388601702:android:c3fd2f9282e32f290da6a7",
+        "android_client_info": {
+          "package_name": "com.infinite_solutions.chatapp.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426388601702-781f16it7g238pqkvp726csnv5geudrs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeXDiZFInbla2Mm5DVxdNSx5lhkBJYriY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426388601702-781f16it7g238pqkvp726csnv5geudrs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

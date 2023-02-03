@@ -4,4 +4,5 @@ public class Constants
 {
     public const string BaseUrl = "api/v1/";
     public const string AuthTokenKey = "Auth_Token";
+    public const string DeviceTokenKey = "Device_Token";
 }

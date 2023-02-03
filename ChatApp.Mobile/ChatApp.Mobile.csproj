@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>ChatApp.Mobile</ApplicationTitle>
+		<ApplicationTitle>ChatApp</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.chatapp.mobile</ApplicationId>
+		<ApplicationId>com.infinite_solutions.chatapp.mobile</ApplicationId>
 		<ApplicationIdGuid>E6322475-E0C6-4879-A52C-359F0D34C82E</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -49,12 +49,31 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\google-services.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <GoogleServicesJson Include="Platforms\Android\google-services.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 	</ItemGroup>
-
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
+		<PackageReference Include="Xamarin.Firebase.Messaging">
+			<Version>123.1.1</Version>
+		</PackageReference>
+		<PackageReference Include="Xamarin.Google.Dagger">
+			<Version>2.44.2</Version>
+		</PackageReference>
+		<PackageReference Include="Xamarin.GooglePlayServices.Base">
+			<Version>118.1.0</Version>
+		</PackageReference>
+	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\ChatApp.Shared\ChatApp.Shared.csproj" />
 	</ItemGroup>
