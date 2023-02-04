@@ -26,7 +26,7 @@ public class MyClient
 #else
 		using var client = new HttpClient();
 #endif
-        client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BaseUrl}");
+        client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BASE_URL}");
         JsonContent stringContent = null;
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

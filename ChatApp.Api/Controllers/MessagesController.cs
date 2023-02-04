@@ -75,7 +75,9 @@ public class MessagesController : ControllerBase
         var messageEntity = new Message()
         {
             FromUserId = sender.Id,
+            FromUserEmail = sender.Email,
             ToUserId = user.Id,
+            ToUserEmail = user.Email,
             Content = message.Content,
             SentAt = DateTime.Now,
             Conversation = conversation

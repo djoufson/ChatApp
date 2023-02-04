@@ -21,6 +21,14 @@ public class AccountController : ControllerBase
         _configuration = configuration;
 	}
 
+    [HttpGet, Authorize]
+    public async Task<ActionResult<IEnumerable<UserWithoutEntities>>> GetAllUsers()
+    {
+        var users = await _dbContext.Users.ToArrayAsync();
+        var usersDto = _mapper.Map<UserDto[]>(users);
+        return Ok(MyOk(_mapper.Map<UserWithoutEntities[]>(usersDto)));
+    }
+
 	[HttpPost]
 	[Route("login")]
     [ValidateModel]
@@ -108,7 +116,7 @@ public class AccountController : ControllerBase
     [HttpPut]
     [Route("device-token")]
     [Authorize]
-    public async Task<ActionResult<BaseResponseDto<UserWithoutEntities>>> UpdateDeviceToken(UpdateDeviceTokenDto logoutInfos)
+    public async Task<ActionResult<BaseResponseDto<UserWithoutEntities>>> UpdateDeviceToken(UpdateDeviceTokenDto updateInfos)
     {
         try
         {
@@ -121,8 +129,17 @@ public class AccountController : ControllerBase
                 StatusCode = StatusCodes.Status401Unauthorized,
                 Errors = new[] { "You are not authorized" }
             });
+            var otherUser = await _dbContext.Users.FirstOrDefaultAsync(u => 
+                u.DeviceToken == updateInfos.DeviceToken && 
+                u.Email != uEmail);
 
-            user.DeviceToken = logoutInfos.DeviceToken;
+            if(otherUser is not null)
+            {
+                // To ensure that we don't have duplicated device tokens
+                otherUser.DeviceToken = null;
+            }
+
+            user.DeviceToken = updateInfos.DeviceToken;
             _dbContext.SaveChanges();
             return Ok(MyOk(user.WithoutEntities(_mapper)));
         }

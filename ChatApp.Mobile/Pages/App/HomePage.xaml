@@ -2,11 +2,78 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
+             xmlns:models="clr-namespace:ChatApp.Mobile.Models"
              x:DataType="vm:HomeViewModel"
              x:Class="ChatApp.Mobile.Pages.App.HomePage"
-             Title="HomePage">
-    <StackLayout>
-        <Label 
-            Text="{Binding User.Email}"/>
-    </StackLayout>
+             Title="Chat">
+
+    <Grid
+        RowDefinitions="Auto, *"
+        ColumnDefinitions="*, Auto">
+        <ActivityIndicator
+            Grid.ColumnSpan="2"
+            Grid.RowSpan="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            HeightRequest="50"
+            WidthRequest="50"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"/>
+        <Label
+            Text="{Binding User.Email}"
+            FontSize="19"
+            Padding="5, 10"
+            FontAttributes="Bold"/>
+        <ImageButton
+            Grid.Row="1"
+            WidthRequest="50"
+            HeightRequest="50"
+            CornerRadius="100"/>
+
+        <ListView
+            Grid.Row="1"
+            SelectionMode="None"
+            HasUnevenRows="True"
+            SeparatorVisibility="None"
+            IsRefreshing="{Binding IsRefreshing}"
+            RefreshCommand="{Binding RefreshCommand}"
+            ItemsSource="{Binding Conversations}"
+            IsPullToRefreshEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell
+                        x:DataType="models:Conversation">
+                        <Grid
+                            Padding="10, 5"
+                            ColumnDefinitions="Auto, *, Auto">
+                            <ImageButton
+                                WidthRequest="50"
+                                HeightRequest="50"
+                                CornerRadius="100"
+                                BackgroundColor="{StaticResource Primary}"/>
+                            <StackLayout
+                                Grid.Column="1">
+                                <Label
+                                    Text="{Binding ToUserEmail}"
+                                    FontSize="16"
+                                    FontAttributes="Bold"/>
+                                <Label
+                                    Text="{Binding LastMessage.Content}"
+                                    LineBreakMode="TailTruncation"/>
+                            </StackLayout>
+                            <StackLayout
+                                Grid.Column="2">
+                                <Label
+                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:dd-MM-yyy}'}"
+                                    HorizontalTextAlignment="End"/>
+                                <Label
+                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:hh:mm}'}"
+                                    HorizontalTextAlignment="End"/>
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </ContentPage>

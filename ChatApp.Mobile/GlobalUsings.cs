@@ -20,3 +20,4 @@ global using ChatApp.Mobile.Services.SignalR.Concrete;
 global using ChatApp.Mobile.ViewModels;
 global using CommunityToolkit.Maui;
 global using ChatApp.Mobile.Pages.App;
+global using System.Collections.ObjectModel;

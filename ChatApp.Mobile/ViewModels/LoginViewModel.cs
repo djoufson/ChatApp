@@ -17,6 +17,8 @@ public partial class LoginViewModel : BaseViewModel
     {
         _user = user;
         _shell = shell;
+        _userEmail = "djoufson@example.com";
+        _userPassword = "String 1";
     }
 
     [RelayCommand]
@@ -30,13 +32,14 @@ public partial class LoginViewModel : BaseViewModel
         };
         try
         {
-            var response = await MyClient.SendRequestAsync<LoginResponseDto>(MyHttpMethods.POST, "account/login", content: content);
+            var response = await MyClient.SendRequestAsync<LoginResponseDto>(MyHttpMethods.POST, LoginRoute, content: content);
             if (response is null)
             {
                 IsBusy = false;
                 await _shell.Current.DisplayAlert("Error", "Wrong Credentials", "OK");
                 return;
             }
+            App.UserEmail = response.User.Email;
             AuthToken = response.Token;
             _user.DeepCopy(response.User);
 
@@ -44,9 +47,10 @@ public partial class LoginViewModel : BaseViewModel
             {
                 {"deviceToken", DeviceToken},
             };
+
             var updateResponse = await MyClient.SendRequestAsync<LoginResponseDto>(
                 method: MyHttpMethods.PUT, 
-                url: "account/device-token", 
+                url: DeviceTokenRoute, 
                 content: content, 
                 auth: AuthToken);
 
@@ -56,6 +60,7 @@ public partial class LoginViewModel : BaseViewModel
         catch(Exception e)
         {
             Debug.WriteLine(e.Message);
+            await _shell.Current.DisplayAlert("Error", e.Message, "OK");
         }
         finally
         {

@@ -15,6 +15,6 @@ public class FirebaseService : FirebaseMessagingService
 	public override void OnNewToken(string token)
 	{
 		base.OnNewToken(token);
-		Preferences.Set(Utilities.Constants.DeviceTokenKey, token);
+		Preferences.Set(Utilities.Constants.DEVICE_TOKEN_KEY, token);
 	}
 }

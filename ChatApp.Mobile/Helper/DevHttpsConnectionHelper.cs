@@ -12,7 +12,7 @@ public class DevHttpsConnectionHelper
 
     public int SslPort { get; }
 
-    public string DevServerName =>
+    public static string DevServerName =>
 #if WINDOWS
         "localhost";
 #elif ANDROID
@@ -23,20 +23,22 @@ public class DevHttpsConnectionHelper
 
     public string DevServerRootUrl { get; set; }
 
-    private Lazy<HttpClient> LazyHttpClient;
+    private readonly Lazy<HttpClient> LazyHttpClient;
     public HttpClient HttpClient => LazyHttpClient.Value;
 
-    public HttpMessageHandler? GetPlatformMessageHandler()
+    public static HttpMessageHandler GetPlatformMessageHandler()
     {
 #if WINDOWS
         return null;
 #elif ANDROID
-        var handler = new CustomAndroidMessageHandler();
-        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+        var handler = new CustomAndroidMessageHandler
         {
-            if (cert != null && cert.Issuer.Equals("CN=localhost"))
-                return true;
-            return errors == SslPolicyErrors.None;
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert != null && cert.Issuer.Equals("CN=localhost"))
+                    return true;
+                return errors == SslPolicyErrors.None;
+            }
         };
         return handler;
 
@@ -53,7 +55,7 @@ public class DevHttpsConnectionHelper
 
         private sealed class CustomHostnameVerifier : Java.Lang.Object, Javax.Net.Ssl.IHostnameVerifier
         {
-            public bool Verify(string? hostname, Javax.Net.Ssl.ISSLSession? session)
+            public bool Verify(string hostname, Javax.Net.Ssl.ISSLSession session)
             {
                 return
                     Javax.Net.Ssl.HttpsURLConnection.DefaultHostnameVerifier.Verify(hostname, session)

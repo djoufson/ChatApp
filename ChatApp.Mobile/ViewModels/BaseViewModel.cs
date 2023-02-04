@@ -3,16 +3,19 @@
 public partial class BaseViewModel : ObservableObject
 {
     protected readonly IMessageConnection _chatConnection;
+    public static string DeviceTokenRoute => Constants.DEVICE_TOKEN_ROUTE;
+    public static string LoginRoute => Constants.LOGIN_ROUTE;
+    public static string ConversationsRoute => Constants.CONVERSATIONS_ROUTE;
     public static string AuthToken 
     {
-        get => Preferences.Get(Constants.AuthTokenKey, "");
-        set => Preferences.Set(Constants.AuthTokenKey, value); 
+        get => Preferences.Get(Constants.AUTH_TOKEN_KEY, "");
+        set => Preferences.Set(Constants.AUTH_TOKEN_KEY, value); 
     }
 
     public static string DeviceToken
     {
-        get => Preferences.Get(Constants.DeviceTokenKey, "");
-        set => Preferences.Set(Constants.DeviceTokenKey, value);
+        get => Preferences.Get(Constants.DEVICE_TOKEN_KEY, "");
+        set => Preferences.Set(Constants.DEVICE_TOKEN_KEY, value);
     }
 
     public BaseViewModel()
