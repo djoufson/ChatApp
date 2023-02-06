@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
+             xmlns:model="clr-namespace:ChatApp.Mobile.Models"
+             x:DataType="vm:InboxViewModel"
              x:Class="ChatApp.Mobile.Pages.App.InboxPage"
              Title="InboxPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <Grid
+        RowDefinitions="*,Auto">
+        <CollectionView
+            ItemsSource="{Binding Messages}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate
+                    x:DataType="model:Message">
+                    <Frame>
+                        <Label
+                            Text="{Binding Content}"/>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Grid
+            Grid.Row="1"
+            ColumnDefinitions="*, Auto">
+            <Frame
+                Padding="10, 0">
+                <Editor
+                    Placeholder="Enter your message"
+                    IsSpellCheckEnabled="True"
+                    MaximumHeightRequest="100"/>
+            </Frame>
+            <Button
+                Grid.Column="1"
+                Text="Send"/>
+        </Grid>
+    </Grid>
 </ContentPage>

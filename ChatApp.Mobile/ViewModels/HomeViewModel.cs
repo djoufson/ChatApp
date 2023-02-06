@@ -60,4 +60,11 @@ public partial class HomeViewModel : BaseViewModel
         await Task.Delay(1500);
         IsRefreshing = false;
     }
+
+
+    [RelayCommand]
+    private Task Select(int conversationId)
+    {
+        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversationId}");
+    }
 }

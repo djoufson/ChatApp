@@ -3,9 +3,11 @@ namespace ChatApp.Mobile.Pages.App;
 public partial class HomePage : ContentPage
 {
 	private bool _isFirstTime = true;
+	private HomeViewModel _viewModel;
 	public HomePage(HomeViewModel viewModel)
 	{
-		BindingContext = viewModel;
+		_viewModel = viewModel;
+		BindingContext = _viewModel;
 		InitializeComponent();
 	}
 
@@ -14,8 +16,14 @@ public partial class HomePage : ContentPage
 		base.OnAppearing();
 		if (_isFirstTime)
 		{
-			await ((HomeViewModel)BindingContext).LoadConversationsAsync();
+			await _viewModel.LoadConversationsAsync();
 			_isFirstTime = false;
 		}
+	}
+
+	private async void ConversationTapped(object sender, ItemTappedEventArgs e)
+	{
+		var conversation = e.Item as Conversation;
+		await _viewModel.SelectCommand.ExecuteAsync(conversation.Id);
 	}
 }

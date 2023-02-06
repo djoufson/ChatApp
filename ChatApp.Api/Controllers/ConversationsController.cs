@@ -42,4 +42,14 @@ public class ConversationsController : ControllerBase
         var conversationsDto = _mapper.Map<ConversationDto[]>(conversations);
         return Ok(MyOk(_mapper.Map<ConversationWithoutEntities[]>(conversationsDto)));
     }
+
+    [HttpGet]
+    [Route("{id:int}/messages")]
+    public async Task<ActionResult> GetMessagesFromACOnversation(int id)
+    {
+        var conversation = await _dbContext.Conversations.Include(c => c.Messages).FirstOrDefaultAsync(c => c.Id == id);
+        var messagesDto = _mapper.Map<MessageDto[]>(conversation?.Messages);
+        
+        return Ok(MyOk(_mapper.Map<MessageWithoutEntities[]>(messagesDto)));
+    }
 }

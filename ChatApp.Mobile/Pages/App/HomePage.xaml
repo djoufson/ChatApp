@@ -38,6 +38,7 @@
             IsRefreshing="{Binding IsRefreshing}"
             RefreshCommand="{Binding RefreshCommand}"
             ItemsSource="{Binding Conversations}"
+            ItemTapped="ConversationTapped"
             IsPullToRefreshEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate>

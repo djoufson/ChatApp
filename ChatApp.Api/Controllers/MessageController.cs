@@ -3,14 +3,14 @@
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class MessagesController : ControllerBase
+public class MessageController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly AppDbContext _dbContext;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
 
-    public MessagesController(
+    public MessageController(
         UserManager<AppUser> userManager,
         AppDbContext dbContext,
         IConfiguration configuration,
@@ -23,7 +23,6 @@ public class MessagesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("")]
     public async Task<ActionResult<IEnumerable<MessageWithoutEntities>>> GetMessages()
     {
         AppUser user = null!;
