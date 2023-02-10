@@ -26,6 +26,7 @@
             SelectionMode="None"
             HasUnevenRows="True"
             SeparatorVisibility="None"
+            ItemTapped="NewMessageTapped"
             ItemsSource="{Binding Users}">
             <ListView.ItemTemplate>
                 <DataTemplate
@@ -41,10 +42,17 @@
                                 CornerRadius="50">
                                 <Image/>
                             </Frame>
-                            <Label
-                                Text="{Binding UserName}"
-                                FontSize="16"
-                                VerticalTextAlignment="Center"/>
+                            <StackLayout
+                                VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding UserName}"
+                                    FontSize="16"
+                                    VerticalTextAlignment="Center"/>
+                                <Label
+                                    Text="{Binding Email}"
+                                    FontSize="13"
+                                    VerticalTextAlignment="Center"/>
+                            </StackLayout>
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>

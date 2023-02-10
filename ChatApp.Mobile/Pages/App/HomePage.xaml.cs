@@ -2,7 +2,6 @@ namespace ChatApp.Mobile.Pages.App;
 
 public partial class HomePage : ContentPage
 {
-	private bool _isFirstTime = true;
 	private HomeViewModel _viewModel;
 	public HomePage(HomeViewModel viewModel)
 	{
@@ -14,11 +13,7 @@ public partial class HomePage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		if (_isFirstTime)
-		{
-			await _viewModel.LoadConversationsAsync();
-			_isFirstTime = false;
-		}
+		await _viewModel.RefreshCommand.ExecuteAsync(this);
 	}
 
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)

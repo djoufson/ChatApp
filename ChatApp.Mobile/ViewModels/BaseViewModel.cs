@@ -3,6 +3,7 @@
 public partial class BaseViewModel : ObservableObject
 {
     protected readonly IMessageConnection _chatConnection;
+    [ObservableProperty] private bool _isBusy;
     public static string DeviceTokenRoute => Constants.DEVICE_TOKEN_ROUTE;
     public static string LoginRoute => Constants.LOGIN_ROUTE;
     public static string ConversationsRoute => Constants.CONVERSATIONS_ROUTE;

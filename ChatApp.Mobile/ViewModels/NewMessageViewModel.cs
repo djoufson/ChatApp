@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ChatApp.Mobile.ViewModels;
 
@@ -6,11 +7,16 @@ public partial class NewMessageViewModel : BaseViewModel
 {
     [ObservableProperty] private string _searchKeyword;
     [ObservableProperty] private ObservableCollection<User> _users;
+    private readonly ShellNavigationService _shell;
     private readonly IDisplayService _displayService;
     private List<User> _userList;
 
-    public NewMessageViewModel(IDisplayService displayService)
+    // CONSTRUCTOR
+    public NewMessageViewModel(
+        IDisplayService displayService,
+        ShellNavigationService shell)
     {
+        _shell = shell;
         _displayService = displayService;
         _userList = new();
         _users = new ();
@@ -32,7 +38,6 @@ public partial class NewMessageViewModel : BaseViewModel
                 Users.Add(user);
     }
 
-
     [RelayCommand]
     private async Task LoadContactsAsync()
     {
@@ -49,5 +54,11 @@ public partial class NewMessageViewModel : BaseViewModel
         {
             await _displayService.DisplayAlert("Error", e.Message, "OK");
         }
+    }
+
+    [RelayCommand]
+    private Task NavigateInboxAsync(User user)
+    {
+        return _shell.GoToAsync($"{nameof(InboxPage)}?WithUserEmail={user.Email}&WithUserName={user.UserName}");
     }
 }

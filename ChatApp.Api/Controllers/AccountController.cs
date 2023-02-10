@@ -24,7 +24,18 @@ public class AccountController : ControllerBase
     [HttpGet, Authorize]
     public async Task<ActionResult<IEnumerable<UserWithoutEntities>>> GetAllUsers()
     {
-        var users = await _dbContext.Users.ToArrayAsync();
+        AppUser user;
+        try
+        {
+            var (uId, uEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(uEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
+
+        var users = await _dbContext.Users
+            .ToListAsync();
+        users.Remove(user);
         var usersDto = _mapper.Map<UserDto[]>(users);
         return Ok(MyOk(_mapper.Map<UserWithoutEntities[]>(usersDto)));
     }

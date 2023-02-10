@@ -6,7 +6,6 @@ public partial class HomeViewModel : BaseViewModel
     private readonly ShellNavigationService _shell;
     [ObservableProperty] User _user;
 	[ObservableProperty] ObservableCollection<Conversation> _conversations;
-    [ObservableProperty] bool _isBusy;
     [ObservableProperty] private bool _isRefreshing;
     
     public HomeViewModel(
@@ -16,11 +15,22 @@ public partial class HomeViewModel : BaseViewModel
         _shell = shell;
         _user = user;
 		_conversations = new ();
+        //Task.Run(async () =>
+        //{
+        //    await LoadConversationsAsync();
+        //    SortConversations();
+        //});
 	}
 
-	public async Task LoadConversationsAsync()
+    private void SortConversations()
     {
-        IsBusy = true;
+        Conversations = new ObservableCollection<Conversation>(Conversations
+            .OrderBy(c => c.LastMessage.SentAt)
+            .Reverse());
+    }
+
+	private async Task LoadConversationsAsync()
+    {
         try
         {
             var response = await MyClient.SendRequestAsync<BaseResponseDto<IEnumerable<ConversationWithoutEntities>>>(
@@ -31,13 +41,11 @@ public partial class HomeViewModel : BaseViewModel
 
             if (response is null)
             {
-                IsBusy = false;
                 await _shell.Current.DisplayAlert("Error", "Wrong Credentials", "OK");
                 return;
             }
 
-            IsBusy = false;
-
+            Conversations.Clear();
             foreach (var conversation in response.Data)
                 Conversations.Add(conversation.AsConversation());
         }
@@ -46,10 +54,6 @@ public partial class HomeViewModel : BaseViewModel
             Debug.WriteLine(e.Message);
             await _shell.Current.DisplayAlert("Error", e.Message, "OK");
         }
-        finally
-        {
-            IsBusy = false;
-        }
     }
 
 
@@ -57,7 +61,8 @@ public partial class HomeViewModel : BaseViewModel
     private async Task RefreshAsync()
     {
         IsRefreshing = true;
-        await Task.Delay(1500);
+        await LoadConversationsAsync();
+        SortConversations();
         IsRefreshing = false;
     }
 
@@ -65,7 +70,7 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     private Task SelectAsync(Conversation conversation)
     {
-        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserName={conversation.ToUserName}");
+        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserEmail={conversation.ToUserEmail}&WithUserName={conversation.ToUserName}");
     }
 
 

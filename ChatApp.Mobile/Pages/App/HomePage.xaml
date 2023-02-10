@@ -9,7 +9,12 @@
              Title="Chat">
     <ContentPage.ToolbarItems>
         <ToolbarItem 
-            Text="New"
+            Text="New Message"
+            Order="{OnPlatform Android=Secondary, iOS=Primary}"
+            Command="{Binding NewMessageCommand}"/>
+        <ToolbarItem 
+            Text="New Group"
+            Order="{OnPlatform Android=Secondary, iOS=Primary}"
             Command="{Binding NewMessageCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
@@ -51,26 +56,46 @@
                 <DataTemplate>
                     <ViewCell
                         x:DataType="models:Conversation">
+                        <ViewCell.ContextActions>
+                            <MenuItem
+                                Text="Pin"/>
+                            <MenuItem
+                                Text="Delete"
+                                IsDestructive="True"/>
+                        </ViewCell.ContextActions>
                         <Grid
                             Padding="10, 5"
-                            ColumnDefinitions="Auto, *, Auto">
-                            <ImageButton
-                                WidthRequest="50"
-                                HeightRequest="50"
+                            ColumnDefinitions="Auto, *, Auto"
+                            ColumnSpacing="5">
+                            <Frame
+                                Padding="0"
                                 CornerRadius="100"
-                                BackgroundColor="{StaticResource Primary}"/>
+                                Background="{StaticResource Primary}">
+                                <ImageButton
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    CornerRadius="100"/>
+                            </Frame>
                             <StackLayout
-                                Grid.Column="1">
+                                Grid.Column="1"
+                                VerticalOptions="Center">
                                 <Label
-                                    Text="{Binding LastMessage.FromUserName, Converter={StaticResource SenderMessageConverter}}"
+                                    Text="{Binding ToUserName}"
                                     FontSize="16"
                                     FontAttributes="Bold"/>
                                 <Label
-                                    Text="{Binding LastMessage.Content}"
-                                    LineBreakMode="TailTruncation"/>
+                                    LineBreakMode="TailTruncation">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{0} : {1}">
+                                            <Binding Path="LastMessage.FromUserName" Converter="{StaticResource SenderMessageConverter}"/>
+                                            <Binding Path="LastMessage.Content"/>
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
                             </StackLayout>
                             <StackLayout
-                                Grid.Column="2">
+                                Grid.Column="2"
+                                VerticalOptions="Center">
                                 <Label
                                     Text="{Binding LastMessage.SentAt, StringFormat='{0:dd-MM-yyy}'}"
                                     HorizontalTextAlignment="End"/>

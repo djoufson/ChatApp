@@ -93,6 +93,6 @@
 	  </MauiXaml>
 	</ItemGroup>
 
-	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionChatAppMobileHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionChatAppMobileHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarChatAppMobileHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>
