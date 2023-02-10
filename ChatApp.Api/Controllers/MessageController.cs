@@ -75,8 +75,10 @@ public class MessageController : ControllerBase
         {
             FromUserId = sender.Id,
             FromUserEmail = sender.Email,
+            FromUserName = sender.UserName,
             ToUserId = user.Id,
             ToUserEmail = user.Email,
+            ToUserName = user.UserName,
             Content = message.Content,
             SentAt = DateTime.Now,
             Conversation = conversation
@@ -114,6 +116,8 @@ public class MessageController : ControllerBase
 
         var messageEntity = new Message
         {
+            FromUserEmail = user.Email,
+            FromUserName = user.UserName,
             Content = message.Content,
             Group = group,
             GroupId = group.Id,

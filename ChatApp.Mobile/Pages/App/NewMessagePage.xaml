@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
+             xmlns:md="clr-namespace:ChatApp.Mobile.Models"
+             x:Class="ChatApp.Mobile.Pages.App.NewMessagePage"
+             x:DataType="vm:NewMessageViewModel"
+             Title="New Message">
+    <Grid
+        RowDefinitions="Auto, *"
+        RowSpacing="10">
+        <StackLayout
+            Spacing="10">
+            <SearchBar
+                Placeholder="Search..."
+                HorizontalOptions="FillAndExpand"
+                Text="{Binding SearchKeyword}"/>
+            <Button
+                HorizontalOptions="Start"
+                BackgroundColor="Transparent"
+                TextColor="{StaticResource Primary}"
+                Text="New Group ✨"/>
+        </StackLayout>
+        <ListView
+            Grid.Row="1"
+            SelectionMode="None"
+            HasUnevenRows="True"
+            SeparatorVisibility="None"
+            ItemsSource="{Binding Users}">
+            <ListView.ItemTemplate>
+                <DataTemplate
+                    x:DataType="md:User">
+                    <ViewCell>
+                        <StackLayout
+                            Padding="5"
+                            Spacing="5"
+                            Orientation="Horizontal">
+                            <Frame
+                                WidthRequest="50"
+                                HeightRequest="50"
+                                CornerRadius="50">
+                                <Image/>
+                            </Frame>
+                            <Label
+                                Text="{Binding UserName}"
+                                FontSize="16"
+                                VerticalTextAlignment="Center"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentPage>

@@ -40,6 +40,7 @@ public partial class LoginViewModel : BaseViewModel
                 return;
             }
             App.UserEmail = response.User.Email;
+            App.UserName = response.User.UserName;
             AuthToken = response.Token;
             _user.DeepCopy(response.User);
 

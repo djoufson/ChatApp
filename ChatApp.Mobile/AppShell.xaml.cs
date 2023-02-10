@@ -6,5 +6,6 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 		Routing.RegisterRoute(nameof(InboxPage), typeof(InboxPage));
-	}
+        Routing.RegisterRoute(nameof(NewMessagePage), typeof(NewMessagePage));
+    }
 }

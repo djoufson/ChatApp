@@ -3,36 +3,82 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              xmlns:model="clr-namespace:ChatApp.Mobile.Models"
+             xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
              x:DataType="vm:InboxViewModel"
              x:Class="ChatApp.Mobile.Pages.App.InboxPage"
-             Title="InboxPage">
+             Title="{Binding WithUserName}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:MessageSideAlignmentConverter x:Key="MessageSideAlignmentConverter" />
+            <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <Grid
-        RowDefinitions="*,Auto">
+        RowDefinitions="*,Auto"
+        Padding="10">
         <CollectionView
             ItemsSource="{Binding Messages}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout
+                    Orientation="Vertical"
+                    ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate
                     x:DataType="model:Message">
-                    <Frame>
+                    <Grid
+                        RowDefinitions="Auto, Auto">
+                        <Frame
+                            Padding="0"
+                            HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}">
+                            <StackLayout
+                                Padding="10">
+                                <Label
+                                    Text="{Binding FromUserName, Converter={StaticResource SenderMessageConverter}}"
+                                    FontSize="12"
+                                    TextColor="{StaticResource Primary}"
+                                    HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
+                                    FontAttributes="Bold"/>
+                                <Label
+                                    Text="{Binding Content}"
+                                    LineBreakMode="WordWrap"/>
+                            </StackLayout>
+                        </Frame>
                         <Label
-                            Text="{Binding Content}"/>
-                    </Frame>
+                            Grid.Row="1"
+                            HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
+                            Text="{Binding SentAt, StringFormat='{0:hh:mm}'}"
+                            FontSize="10"/>
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <Grid
+
+        <StackLayout
+            Margin="10"
+            Orientation="Horizontal"
             Grid.Row="1"
-            ColumnDefinitions="*, Auto">
+            Spacing="10">
             <Frame
-                Padding="10, 0">
-                <Editor
-                    Placeholder="Enter your message"
-                    IsSpellCheckEnabled="True"
-                    MaximumHeightRequest="100"/>
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Padding="5">
+                <ScrollView
+                    VerticalOptions="EndAndExpand"
+                    MaximumHeightRequest="200">
+                    <Editor
+                        AutoSize="TextChanges"
+                        Placeholder="Enter your message"
+                        IsSpellCheckEnabled="True"
+                        MaxLength="600"/>
+                </ScrollView>
             </Frame>
-            <Button
-                Grid.Column="1"
-                Text="Send"/>
-        </Grid>
+            <Button 
+                Text="Send"
+                Padding="15"
+                Margin="10,0,0,0"
+                VerticalOptions="EndAndExpand"/>
+        </StackLayout>
     </Grid>
 </ContentPage>

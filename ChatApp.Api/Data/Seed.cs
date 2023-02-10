@@ -18,21 +18,21 @@ public static class Seed
         {
             new RegisterDto()
             {
-                UserName = "djoufson",
+                UserName = "Djoufson",
                 Email = "djoufson@example.com",
                 Password = "String 1",
                 PhoneNumber = "699254549"
             },
             new RegisterDto()
             {
-                UserName = "johndoe",
+                UserName = "JohnDoe",
                 Email = "doe@example.com",
                 Password = "String 2",
                 PhoneNumber = "699254549"
             },
             new RegisterDto()
             {
-                UserName = "janesmith",
+                UserName = "JaneSmith",
                 Email = "jane@example.com",
                 Password = "String 3",
                 PhoneNumber = "699254549"

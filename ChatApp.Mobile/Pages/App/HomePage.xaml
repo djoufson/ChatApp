@@ -3,9 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              xmlns:models="clr-namespace:ChatApp.Mobile.Models"
+             xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
              x:DataType="vm:HomeViewModel"
              x:Class="ChatApp.Mobile.Pages.App.HomePage"
              Title="Chat">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem 
+            Text="New"
+            Command="{Binding NewMessageCommand}"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid
         RowDefinitions="Auto, *"
@@ -19,16 +30,12 @@
             WidthRequest="50"
             IsRunning="{Binding IsBusy}"
             IsVisible="{Binding IsBusy}"/>
-        <Label
-            Text="{Binding User.Email}"
-            FontSize="19"
-            Padding="5, 10"
-            FontAttributes="Bold"/>
         <ImageButton
             Grid.Row="1"
             WidthRequest="50"
             HeightRequest="50"
-            CornerRadius="100"/>
+            CornerRadius="100"
+            BackgroundColor="{StaticResource Primary}"/>
 
         <ListView
             Grid.Row="1"
@@ -55,7 +62,7 @@
                             <StackLayout
                                 Grid.Column="1">
                                 <Label
-                                    Text="{Binding ToUserEmail}"
+                                    Text="{Binding LastMessage.FromUserName, Converter={StaticResource SenderMessageConverter}}"
                                     FontSize="16"
                                     FontAttributes="Bold"/>
                                 <Label

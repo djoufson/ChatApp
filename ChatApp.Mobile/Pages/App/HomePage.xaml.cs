@@ -24,6 +24,6 @@ public partial class HomePage : ContentPage
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)
 	{
 		var conversation = e.Item as Conversation;
-		await _viewModel.SelectCommand.ExecuteAsync(conversation.Id);
+		await _viewModel.SelectCommand.ExecuteAsync(conversation);
 	}
 }

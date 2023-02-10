@@ -20,4 +20,19 @@ public class Conversation : ConversationWithoutEntities
             return email1;
         }
     }
+
+    public string ToUserName
+    {
+        get
+        {
+            var username1 = LastMessage.ToUserName;
+            var username2 = LastMessage.FromUserName;
+            var username = App.UserName;
+
+            if (username.Equals(username1, StringComparison.OrdinalIgnoreCase))
+                return username2;
+
+            return username1;
+        }
+    }
 }

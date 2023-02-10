@@ -8,7 +8,7 @@ public partial class HomeViewModel : BaseViewModel
 	[ObservableProperty] ObservableCollection<Conversation> _conversations;
     [ObservableProperty] bool _isBusy;
     [ObservableProperty] private bool _isRefreshing;
-
+    
     public HomeViewModel(
         User user,
         ShellNavigationService shell)
@@ -63,8 +63,15 @@ public partial class HomeViewModel : BaseViewModel
 
 
     [RelayCommand]
-    private Task Select(int conversationId)
+    private Task SelectAsync(Conversation conversation)
     {
-        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversationId}");
+        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserName={conversation.ToUserName}");
+    }
+
+
+    [RelayCommand]
+    private Task NewMessageAsync()
+    {
+        return _shell.GoToAsync(nameof(NewMessagePage));
     }
 }
