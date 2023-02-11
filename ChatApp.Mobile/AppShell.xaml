@@ -12,9 +12,31 @@
         ContentTemplate="{DataTemplate pages:LoginPage}"
         Route="LoginPage" />
 
-    <ShellContent
-        Title="Login"
-        ContentTemplate="{DataTemplate appPages:HomePage}"
-        Route="HomePage" />
+    <FlyoutItem>
+        <Tab
+            Title="Inbox"
+            Icon="chat">
+            <ShellContent
+                Title="Chat"
+                ContentTemplate="{DataTemplate appPages:HomePage}"
+                Route="HomePage" />
+        </Tab>
+        <Tab
+            Title="Profile"
+            Icon="user">
+            <ShellContent
+                Title="Profile"
+                ContentTemplate="{DataTemplate appPages:ProfilePage}"
+                Route="ProfilePage" />
+        </Tab>
+        <Tab
+            Title="Settings"
+            Icon="settings">
+            <ShellContent
+                Title="Settings"
+                ContentTemplate="{DataTemplate appPages:SettingsPage}"
+                Route="SettingsPage" />
+        </Tab>
+    </FlyoutItem>
 
 </Shell>
