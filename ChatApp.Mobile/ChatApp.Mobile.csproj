@@ -53,6 +53,7 @@
 	  <None Remove="Resources\Images\chat.svg" />
 	  <None Remove="Resources\Images\settings.svg" />
 	  <None Remove="Resources\Images\user.svg" />
+	  <None Remove="Resources\Images\useravatar.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

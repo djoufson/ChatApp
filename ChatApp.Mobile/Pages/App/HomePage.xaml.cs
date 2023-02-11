@@ -13,7 +13,7 @@ public partial class HomePage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await _viewModel.RefreshCommand.ExecuteAsync(this);
+		await _viewModel.LoadConversationsAsync();
 	}
 
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)

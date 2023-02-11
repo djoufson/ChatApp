@@ -30,6 +30,7 @@ public class MessagesHub : Hub
         var (_, email) = GetUserInfos(Context.User!);
         var user = await _userManager.FindByEmailAsync(email);
         if(user is null) return;
+        Console.WriteLine($"---> {email} just joined the chat");
         await _cacheContext.Connections.AddAsync(new ChatUserConnection()
         {
             ConnectionId = Context.ConnectionId,
@@ -43,6 +44,7 @@ public class MessagesHub : Hub
         await base.OnDisconnectedAsync(exception);
         var connection = await _cacheContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
         if(connection is null) return;
+        Console.WriteLine($"---> {connection.UserEmail} lived the chat right now");
         _cacheContext.Connections.Remove(connection);
         _cacheContext.SaveChanges();
     }

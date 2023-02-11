@@ -6,10 +6,12 @@
              xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
              x:DataType="vm:InboxViewModel"
              x:Class="ChatApp.Mobile.Pages.App.InboxPage"
+             Shell.TabBarIsVisible="False"
              Title="{Binding WithUserName}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:MessageSideAlignmentConverter x:Key="MessageSideAlignmentConverter" />
+            <converters:ColumnConverter x:Key="ColumnConverter" />
             <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -29,11 +31,15 @@
                 <DataTemplate
                     x:DataType="model:Message">
                     <Grid
-                        RowDefinitions="Auto, Auto">
+                        RowDefinitions="Auto, Auto"
+                        ColumnDefinitions="*,*,*">
                         <Frame
+                            Grid.Column="{Binding FromUserEmail, Converter={StaticResource ColumnConverter}}"
+                            Grid.ColumnSpan="2"
                             Padding="0"
                             HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}">
-                            <StackLayout
+                            <Grid
+                                RowDefinitions="Auto, Auto"
                                 Padding="10">
                                 <Label
                                     Text="{Binding FromUserName, Converter={StaticResource SenderMessageConverter}}"
@@ -42,12 +48,15 @@
                                     HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
                                     FontAttributes="Bold"/>
                                 <Label
+                                    Grid.Row="1"
                                     Text="{Binding Content}"
                                     LineBreakMode="WordWrap"/>
-                            </StackLayout>
+                            </Grid>
                         </Frame>
                         <Label
                             Grid.Row="1"
+                            Grid.Column="{Binding FromUserEmail, Converter={StaticResource ColumnConverter}}"
+                            Grid.ColumnSpan="3"
                             Margin="5, 0"
                             HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
                             Text="{Binding SentAt, StringFormat='{0:hh:mm}'}"

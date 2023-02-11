@@ -35,12 +35,6 @@
             WidthRequest="50"
             IsRunning="{Binding IsBusy}"
             IsVisible="{Binding IsBusy}"/>
-        <ImageButton
-            Grid.Row="1"
-            WidthRequest="50"
-            HeightRequest="50"
-            CornerRadius="100"
-            BackgroundColor="{StaticResource Primary}"/>
 
         <ListView
             Grid.Row="1"
@@ -69,15 +63,22 @@
                             ColumnSpacing="5">
                             <Frame
                                 Padding="0"
-                                CornerRadius="100"
-                                Background="{StaticResource Primary}">
-                                <ImageButton
-                                    WidthRequest="60"
-                                    HeightRequest="60"
-                                    CornerRadius="100"/>
+                                CornerRadius="100">
+                                <Grid>
+                                    <Image
+                                        Source="useravatar"
+                                        WidthRequest="60"
+                                        HeightRequest="60"
+                                        Aspect="AspectFill"/>
+                                    <ImageButton
+                                        WidthRequest="60"
+                                        HeightRequest="60"
+                                        CornerRadius="100"/>
+                                </Grid>
                             </Frame>
                             <StackLayout
                                 Grid.Column="1"
+                                Margin="5,0,0,0"
                                 VerticalOptions="Center">
                                 <Label
                                     Text="{Binding ToUserName}"

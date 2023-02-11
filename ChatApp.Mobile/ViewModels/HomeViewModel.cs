@@ -29,7 +29,7 @@ public partial class HomeViewModel : BaseViewModel
             .Reverse());
     }
 
-	private async Task LoadConversationsAsync()
+	public async Task LoadConversationsAsync()
     {
         try
         {

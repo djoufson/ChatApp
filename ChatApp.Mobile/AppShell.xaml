@@ -14,7 +14,7 @@
 
     <FlyoutItem>
         <Tab
-            Title="Inbox"
+            Title="Chat"
             Icon="chat">
             <ShellContent
                 Title="Chat"
