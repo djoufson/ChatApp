@@ -13,13 +13,38 @@ public class MessageStatusHub : Hub
         _userManager = userManager;
     }
 
-    public Task DeliverMessage(string groupId)
+    public async Task DeliverMessage(string issuerMail, int messageId, int conversationId)
     {
-        throw new NotImplementedException();
+        var user = await _cacheContext.Connections
+            .FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
+
+        if (user is null) return;
+
+        var issuer = await _cacheContext.Connections
+            .FirstOrDefaultAsync(c => c.UserEmail == issuerMail);
+
+        if (issuer is null) return;
+        await Clients.Client(issuer.ConnectionId).SendAsync(EventNames.MessageDelivered, new MessageDeliveredEventArgs()
+        {
+            Status = true,
+            MessageId = messageId,
+            UserEmail = user.UserEmail,
+            ConversationId = conversationId,
+            UserName = user.UserName
+        });
     }
 
-    public Task OpenMessage(string groupId)
+    public async Task OpenConversation(int conversationId, string toUserEmail)
     {
-        throw new NotImplementedException();
+        var user = await _cacheContext.Connections
+            .FirstOrDefaultAsync(c => c.UserEmail == toUserEmail);
+
+        if (user is null) return;
+
+        await Clients.Client(user.ConnectionId).SendAsync(EventNames.MessageDelivered, new ConversationOpenedEventArgs()
+        {
+            Status = true,
+            ConversationId = conversationId
+        });
     }
 }

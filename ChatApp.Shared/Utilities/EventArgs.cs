@@ -45,3 +45,28 @@ public class GroupLeftEventArgs
     public string UserName { get; set; } = null!;
     public string UserEmail { get; set; } = null!;
 }
+
+public class MessageDeliveredEventArgs
+{
+    public bool Status { get; set; }
+    public int MessageId { get; set; }
+    public string UserName { get; set; } = null!;
+    public string UserEmail { get; set; } = null!;
+    public int ConversationId { get; set; }
+}
+
+public class OnlineStatusChangedEventArgs
+{
+    public bool Status { get; set; }
+    public int MessageId { get; set; }
+    public string UserName { get; set; } = null!;
+    public string UserEmail { get; set; } = null!;
+    public int ConversationId { get; set; }
+    public bool Online { get; set; }
+}
+
+public class ConversationOpenedEventArgs
+{
+    public bool Status { get; set; }
+    public int ConversationId { get; set; }
+}

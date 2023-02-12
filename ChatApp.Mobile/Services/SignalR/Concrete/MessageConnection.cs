@@ -7,14 +7,14 @@ namespace ChatApp.Mobile.Services.SignalR.Concrete;
 internal class MessageConnection : IMessageConnection
 {
     public event EventHandler<RecievedMessageEventArg> OnMessageRecieved;
-    private HubConnection _connection;
+    private readonly HubConnection _connection;
     public MessageConnection()
     {
         _connection = new HubConnectionBuilder()
         #if ANDROID && DEBUG
-            .WithUrl("https://192.168.8.100:7177/messages")
+            .WithUrl($"https://192.168.8.100:7177/{HubRoutes.MessagesRoute}")
         #else
-			.WithUrl("https://localhost:7177/messages")
+			.WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}")
         #endif
             .Build();
         

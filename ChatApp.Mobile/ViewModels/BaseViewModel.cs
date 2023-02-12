@@ -34,7 +34,7 @@ public partial class BaseViewModel : ObservableObject
         // Construction without chat connection
     }
 
-    protected virtual void MessageRecieved(object sender, RecievedMessageEventArg message)
+    protected virtual void MessageRecieved(object sender, RecievedMessageEventArg e)
     {
         // When the viewModel Recieves a new message
         if(_chatConnection is null) throw new NullReferenceException("The class implementation is not provided a chat connection");

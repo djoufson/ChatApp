@@ -1,5 +1,4 @@
-﻿using ChatApp.Shared.Utilities.EventArgs;
-using Microsoft.AspNetCore.SignalR;
+﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ChatApp.Api.Hubs;
 
@@ -9,6 +8,7 @@ public class MessagesHub : Hub
     private readonly CacheContext _cacheContext;
     private readonly UserManager<AppUser> _userManager;
 
+    // CONSTRUCTOR
     public MessagesHub(
         CacheContext cacheContext, 
         UserManager<AppUser> userManager)
@@ -31,18 +31,16 @@ public class MessagesHub : Hub
         if (user is null) return;
         await Clients
             .Client(user.ConnectionId)
-            .SendAsync(
-                EventNames.MessageRecieved, 
-                new RecievedMessageEventArg()
-                {
-                    IssuerEmail = issuer.UserEmail,
-                    IssuerName = issuer.UserName,
-                    Message = message, 
-                    Status = true
-                });
+            .SendAsync(EventNames.MessageRecieved, new RecievedMessageEventArg()
+            {
+                IssuerEmail = issuer.UserEmail,
+                IssuerName = issuer.UserName,
+                Message = message, 
+                Status = true
+            });
     }
 
-    public async Task SendMessageToGroup(string groupId, MessageWithoutEntities message)
+    public async Task SendMessageToGroup(int groupId, MessageWithoutEntities message)
     {
         var issuer = await _cacheContext.Connections
             .FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
@@ -54,15 +52,13 @@ public class MessagesHub : Hub
         if (group is null) return;
         await Clients
             .GroupExcept(group.Id, issuer.ConnectionId)
-            .SendAsync(
-                EventNames.MessageRecievedFromGroup,
-                new RecievedMessageEventArg()
-                {
-                    IssuerEmail = issuer.UserEmail,
-                    IssuerName = issuer.UserName,
-                    Message = message,
-                    Status = true
-                });
+            .SendAsync(EventNames.MessageRecievedFromGroup, new RecievedMessageEventArg()
+            {
+                IssuerEmail = issuer.UserEmail,
+                IssuerName = issuer.UserName,
+                Message = message,
+                Status = true
+            });
     }
 
     public override async Task OnConnectedAsync()
@@ -78,7 +74,17 @@ public class MessagesHub : Hub
             UserName = user.UserName,
             UserEmail = email
         });
-        _cacheContext.SaveChanges();
+        await Clients
+            .All
+            .SendAsync(EventNames.OnlineStatusChanged, new OnlineStatusChangedEventArgs()
+            {
+                Status = true,
+                UserEmail = user.Email,
+                UserName = user.UserName,
+                Online = true
+            });
+
+        await _cacheContext.SaveChangesAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -87,7 +93,16 @@ public class MessagesHub : Hub
         var connection = await _cacheContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
         if(connection is null) return;
         Console.WriteLine($"---> {connection.UserEmail} lived the chat right now");
+        await Clients
+            .All
+            .SendAsync(EventNames.OnlineStatusChanged, new OnlineStatusChangedEventArgs()
+            {
+                Status = true,
+                UserEmail = connection.UserEmail,
+                UserName = connection.UserName,
+                Online = false
+            });
         _cacheContext.Connections.Remove(connection);
-        _cacheContext.SaveChanges();
+        await _cacheContext.SaveChangesAsync();
     }
 }

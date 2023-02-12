@@ -3,18 +3,26 @@
 public class OnlineStatusHub : Hub
 {
     private readonly CacheContext _cacheContext;
-    private readonly UserManager<AppUser> _userManager;
 
     public OnlineStatusHub(
-        CacheContext cacheContext,
-        UserManager<AppUser> userManager)
+        CacheContext cacheContext)
     {
         _cacheContext = cacheContext;
-        _userManager = userManager;
     }
 
-    public Task ChangeOnlineStatus(string groupId)
+    public async Task ChangeOnlineStatus(bool status)
     {
-        throw new NotImplementedException();
+        var user = await _cacheContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
+        if (user is null) return;
+
+        await Clients
+            .All
+            .SendAsync(EventNames.OnlineStatusChanged, new OnlineStatusChangedEventArgs()
+            {
+                Status = true,
+                UserEmail = user.UserEmail,
+                UserName = user.UserName,
+                Online = status
+            });
     }
 }

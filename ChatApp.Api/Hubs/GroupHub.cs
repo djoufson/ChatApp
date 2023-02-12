@@ -1,7 +1,4 @@
-﻿using ChatApp.Shared.Utilities.EventArgs;
-using System.Dynamic;
-
-namespace ChatApp.Api.Hubs;
+﻿namespace ChatApp.Api.Hubs;
 
 [Authorize]
 public class GroupHub : Hub

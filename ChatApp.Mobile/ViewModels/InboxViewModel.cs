@@ -1,4 +1,6 @@
-﻿namespace ChatApp.Mobile.ViewModels;
+﻿using ChatApp.Shared.Utilities.EventArgs;
+
+namespace ChatApp.Mobile.ViewModels;
 
 
 [QueryProperty(nameof(ConversationId), nameof(ConversationId))]
@@ -22,11 +24,6 @@ public partial class InboxViewModel : BaseViewModel
     {
         _displayService = displayService;
         _messages = new ();
-    }
-
-    protected override void MessageRecieved(object sender, string message)
-    {
-        base.MessageRecieved(sender, message);
     }
 
     [RelayCommand]

@@ -9,7 +9,7 @@ public class EventNames
     public const string MessageRecievedFromGroup = "MessageRecievedFromGroup";
 
     // Connection status events (Online / Offline)
-    public const string StatusOnlineChanged = "StatusOnlineChanged";
+    public const string OnlineStatusChanged = "OnlineStatusChanged";
     public const string ChangeOnlineStatus = "ChangeOnlineStatus";
 
     // Writing status events (Writing if someone is writing)
@@ -19,9 +19,9 @@ public class EventNames
     // Message status events (Sent, Delivered, Opened)
     //public const string MessageSent = "MessageSent"; // Removed because the sent status is not shared across the network
     public const string MessageDelivered = "MessageDelivered"; // The delivered status istead is shared to other users
-    public const string MessageOpened = "MessageOpened"; // As well as the opend status
+    public const string ConversationOpened = "ConversationOpened"; // As well as the opend status
     public const string DeliverMessage = "DeliverMessage";
-    public const string OpenMessage = "OpenMessage";
+    public const string OpenConversation = "OpenConversation";
 
     // Group status events
     public const string RestoreGroup = "RestoreGroup";
