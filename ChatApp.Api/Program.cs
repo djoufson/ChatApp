@@ -2,7 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddTransient<IMyHttpClient, MyHttpClient>(service =>
+builder.Services.AddScoped<IMyHttpClient, MyHttpClient>(_ =>
 {
     var client = new MyHttpClient();
     client.UseBaseUrl("https://google.com/api");

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
-namespace ChatApp.Api.Data;
+﻿namespace ChatApp.Api.Data;
 
 public static class Seed
 {
