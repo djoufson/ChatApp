@@ -27,6 +27,10 @@ public class EventNames
     public const string RestoreGroup = "RestoreGroup";
     public const string GroupJoined = "GroupJoined";
     public const string GroupLeft = "GroupLeft";
+    public const string AddedToGroup = "AddedToGroup";
+    public const string RemovedFromGroup = "RemovedFromGroup";
     public const string JoinGroup = "JoinGroup";
+    public const string AddToGroup = "AddToGroup";
+    public const string RemoveFromGroup = "RemoveFromGroup";
     public const string LeaveGroup = "LeaveGroup";
 }

@@ -4,7 +4,7 @@ internal class Utils
 {
     internal static async Task<GroupConnection?> RetrieveGroup(
         CacheContext cacheContext,
-        string groupId,
+        int groupId,
         bool strict = false)
     {
         var group = await cacheContext.Groups.FirstOrDefaultAsync(g => g.GroupId == groupId);
