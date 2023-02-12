@@ -12,7 +12,7 @@ public class GroupHub : Hub
         _cacheContext = cacheContext;
     }
 
-    public async Task RestoreGroup(int groupId)
+    public async Task RestoreGroupConnection(int groupId)
     {
         var userConnectionId = Context.ConnectionId;
         if (string.IsNullOrEmpty(userConnectionId)) return;

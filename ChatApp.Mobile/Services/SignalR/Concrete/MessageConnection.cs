@@ -1,30 +1,27 @@
-﻿using ChatApp.Shared.Utilities.EventArgs;
-using Microsoft.AspNetCore.SignalR.Client;
-using static System.Net.Mime.MediaTypeNames;
+﻿namespace ChatApp.Mobile.Services.SignalR.Concrete;
 
-namespace ChatApp.Mobile.Services.SignalR.Concrete;
-
-internal class MessageConnection : IMessageConnection
+public class MessageConnection : IMessageConnection
 {
     public event EventHandler<RecievedMessageEventArg> OnMessageRecieved;
     private readonly HubConnection _connection;
     public MessageConnection()
     {
         _connection = new HubConnectionBuilder()
-        #if ANDROID && DEBUG
-            .WithUrl($"https://192.168.8.100:7177/{HubRoutes.MessagesRoute}")
-        #else
 			.WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}")
-        #endif
             .Build();
         
         Task.Run(async () => await ConnectAsync());
         _connection.On<RecievedMessageEventArg>(EventNames.MessageRecieved, MessageRecieved);
     }
+
+    #region EVENT HANDLERS
     private void MessageRecieved(RecievedMessageEventArg message)
     {
         OnMessageRecieved?.Invoke(this, message);
     }
+    #endregion
+
+    #region PUBLIC INTERFACE
     public Task ConnectAsync()
     {
         return _connection.StartAsync();
@@ -39,4 +36,5 @@ internal class MessageConnection : IMessageConnection
     {
         return _connection.InvokeCoreAsync(EventNames.SendMessageToUser, new[] { toUserEmail, content });
     }
+    #endregion
 }

@@ -3,14 +3,11 @@
 public class MessageStatusHub : Hub
 {
     private readonly CacheContext _cacheContext;
-    private readonly UserManager<AppUser> _userManager;
 
     public MessageStatusHub(
-        CacheContext cacheContext,
-        UserManager<AppUser> userManager)
+        CacheContext cacheContext)
     {
         _cacheContext = cacheContext;
-        _userManager = userManager;
     }
 
     public async Task DeliverMessage(string issuerMail, int messageId, int conversationId)

@@ -4,6 +4,7 @@ public class OnlineStatusHub : Hub
 {
     private readonly CacheContext _cacheContext;
 
+    // CONSTRUCTOR
     public OnlineStatusHub(
         CacheContext cacheContext)
     {

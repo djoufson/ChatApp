@@ -1,6 +1,4 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
-namespace ChatApp.Api.Hubs;
+﻿namespace ChatApp.Api.Hubs;
 
 [Authorize]
 public class MessagesHub : Hub

@@ -22,7 +22,8 @@ public partial class BaseViewModel : ObservableObject
     }
 
     // CONSTRUCTOR
-    public BaseViewModel(IMessageConnection chatConnection)
+    public BaseViewModel(
+        IMessageConnection chatConnection)
     {
         // Construction with chat connection
         _chatConnection = chatConnection;

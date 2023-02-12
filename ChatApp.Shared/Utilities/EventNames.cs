@@ -24,7 +24,7 @@ public class EventNames
     public const string OpenConversation = "OpenConversation";
 
     // Group status events
-    public const string RestoreGroup = "RestoreGroup";
+    public const string RestoreGroupConnection = "RestoreGroupConnection";
     public const string GroupJoined = "GroupJoined";
     public const string GroupLeft = "GroupLeft";
     public const string AddedToGroup = "AddedToGroup";

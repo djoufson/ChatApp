@@ -53,7 +53,10 @@ public static class MauiProgram
 	// Hub Connections
     private static IServiceCollection RegisterHubConnections(this IServiceCollection services)
     {
+        services.AddSingleton<IGroupConnection, GroupConnection>();
         services.AddSingleton<IMessageConnection, MessageConnection>();
+        services.AddSingleton<IOnlineStatusConnection, OnlineStatusConnection>();
+        services.AddSingleton<IMessageStatusConnection, MessageStatusConnection>();
         return services;
     }
 }

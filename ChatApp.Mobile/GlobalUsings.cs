@@ -21,3 +21,4 @@ global using ChatApp.Mobile.ViewModels;
 global using CommunityToolkit.Maui;
 global using ChatApp.Mobile.Pages.App;
 global using System.Collections.ObjectModel;
+global using ChatApp.Shared.Utilities.EventArgs;
