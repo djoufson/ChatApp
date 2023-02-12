@@ -1,10 +1,12 @@
-﻿namespace ChatApp.Mobile.Services.SignalR.Interfaces
+﻿using ChatApp.Shared.Utilities.EventArgs;
+
+namespace ChatApp.Mobile.Services.SignalR.Interfaces
 {
     public interface IMessageConnection
     {
-        event EventHandler<string> OnMessageRecieved;
+        event EventHandler<RecievedMessageEventArg> OnMessageRecieved;
         Task ConnectAsync();
         Task DisconnectAsync();
-        Task SendMessageAsync(string text);
+        Task SendMessageToAsync(string toUserEmail, string content);
     }
 }

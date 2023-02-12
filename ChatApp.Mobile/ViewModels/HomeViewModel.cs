@@ -9,8 +9,9 @@ public partial class HomeViewModel : BaseViewModel
     [ObservableProperty] private bool _isRefreshing;
     
     public HomeViewModel(
+        IMessageConnection messageConnection,
         User user,
-        ShellNavigationService shell)
+        ShellNavigationService shell) : base(messageConnection)
 	{
         _shell = shell;
         _user = user;

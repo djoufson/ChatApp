@@ -21,12 +21,13 @@ public class MyClient
     public static async Task<T> SendRequestAsync<T>(MyHttpMethods method, string url, Dictionary<string, string> content = null, string auth = null)
     {
 #if DEBUG
-        var devSslHelper = new DevHttpsConnectionHelper(7177);
+        var devSslHelper = new DevHttpsConnectionHelper(Constants.PORT);
         using var client = devSslHelper.HttpClient;
+        client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BASE_URL}");
 #else
 		using var client = new HttpClient();
+        client.BaseAddress = new Uri(Constants.FULL_BASE_URL);
 #endif
-        client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BASE_URL}");
         JsonContent stringContent = null;
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

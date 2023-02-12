@@ -13,8 +13,9 @@ public partial class NewMessageViewModel : BaseViewModel
 
     // CONSTRUCTOR
     public NewMessageViewModel(
-        IDisplayService displayService,
-        ShellNavigationService shell)
+        IMessageConnection messageConnection, 
+        IDisplayService displayService, 
+        ShellNavigationService shell) : base(messageConnection)
     {
         _shell = shell;
         _displayService = displayService;

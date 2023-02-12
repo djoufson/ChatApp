@@ -1,4 +1,6 @@
-﻿namespace ChatApp.Mobile.ViewModels;
+﻿using ChatApp.Shared.Utilities.EventArgs;
+
+namespace ChatApp.Mobile.ViewModels;
 
 public partial class BaseViewModel : ObservableObject
 {
@@ -19,15 +21,22 @@ public partial class BaseViewModel : ObservableObject
         set => Preferences.Set(Constants.DEVICE_TOKEN_KEY, value);
     }
 
-    public BaseViewModel()
+    // CONSTRUCTOR
+    public BaseViewModel(IMessageConnection chatConnection)
     {
-        var chatConnection = Application.Current.Handler.MauiContext.Services.GetRequiredService<IMessageConnection>();
+        // Construction with chat connection
         _chatConnection = chatConnection;
         _chatConnection.OnMessageRecieved += MessageRecieved;
     }
 
-    protected virtual void MessageRecieved(object sender, string message)
+    public BaseViewModel()
+    {
+        // Construction without chat connection
+    }
+
+    protected virtual void MessageRecieved(object sender, RecievedMessageEventArg message)
     {
         // When the viewModel Recieves a new message
+        if(_chatConnection is null) throw new NullReferenceException("The class implementation is not provided a chat connection");
     }
 }

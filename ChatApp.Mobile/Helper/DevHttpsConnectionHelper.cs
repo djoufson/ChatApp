@@ -12,14 +12,7 @@ public class DevHttpsConnectionHelper
 
     public int SslPort { get; }
 
-    public static string DevServerName =>
-#if WINDOWS
-        "localhost";
-#elif ANDROID
-        "10.0.2.2";
-#else
-        throw new PlatformNotSupportedException("Only Windows and Android currently supported.");
-#endif
+    public static string DevServerName => Constants.DEV_SERVER_NAME;
 
     public string DevServerRootUrl { get; set; }
 

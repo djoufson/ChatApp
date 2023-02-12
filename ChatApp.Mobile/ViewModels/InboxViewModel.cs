@@ -16,10 +16,17 @@ public partial class InboxViewModel : BaseViewModel
     public event EventHandler OnLoadCompleted;
 
     // CONSTRUCTOR
-    public InboxViewModel(IDisplayService displayService)
+    public InboxViewModel(
+        IDisplayService displayService,
+        IMessageConnection messageConnection) : base(messageConnection)
     {
         _displayService = displayService;
         _messages = new ();
+    }
+
+    protected override void MessageRecieved(object sender, string message)
+    {
+        base.MessageRecieved(sender, message);
     }
 
     [RelayCommand]

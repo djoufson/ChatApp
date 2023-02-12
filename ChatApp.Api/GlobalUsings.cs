@@ -29,3 +29,5 @@ global using ChatApp.Shared.Dtos;
 global using ChatApp.Shared.Dtos.Requests;
 global using ChatApp.Shared.Dtos.Responses;
 global using static ChatApp.Api.Dtos.Responses.Handlers;
+global using Microsoft.AspNetCore.SignalR;
+global using ChatApp.Shared.Utilities;

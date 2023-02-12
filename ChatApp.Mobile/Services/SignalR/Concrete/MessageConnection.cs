@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using ChatApp.Shared.Utilities.EventArgs;
+using Microsoft.AspNetCore.SignalR.Client;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ChatApp.Mobile.Services.SignalR.Concrete;
 
 internal class MessageConnection : IMessageConnection
 {
-    public event EventHandler<string> OnMessageRecieved;
+    public event EventHandler<RecievedMessageEventArg> OnMessageRecieved;
     private HubConnection _connection;
     public MessageConnection()
     {
@@ -17,9 +19,9 @@ internal class MessageConnection : IMessageConnection
             .Build();
         
         Task.Run(async () => await ConnectAsync());
-        _connection.On<string>(EventNames.MessageRecieved, MessageRecieved);
+        _connection.On<RecievedMessageEventArg>(EventNames.MessageRecieved, MessageRecieved);
     }
-    private void MessageRecieved(string message)
+    private void MessageRecieved(RecievedMessageEventArg message)
     {
         OnMessageRecieved?.Invoke(this, message);
     }
@@ -33,8 +35,8 @@ internal class MessageConnection : IMessageConnection
         return _connection.StopAsync();
     }
 
-    public Task SendMessageAsync(string text)
+    public Task SendMessageToAsync(string toUserEmail, string content)
     {
-        return _connection.InvokeCoreAsync(EventNames.SendMessage, new[] { text });
+        return _connection.InvokeCoreAsync(EventNames.SendMessageToUser, new[] { toUserEmail, content });
     }
 }

@@ -7,4 +7,5 @@ public class ChatUserConnection
     [Required]
     [DataType(DataType.EmailAddress)]
     public string UserEmail { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 }

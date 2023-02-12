@@ -1,4 +1,4 @@
-﻿using ChatApp.Shared.Utilities;
+﻿using ChatApp.Shared.Utilities.EventArgs;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.Api.Hubs;
@@ -9,19 +9,60 @@ public class MessagesHub : Hub
     private readonly CacheContext _cacheContext;
     private readonly UserManager<AppUser> _userManager;
 
-    public MessagesHub(CacheContext cacheContext, UserManager<AppUser> userManager)
+    public MessagesHub(
+        CacheContext cacheContext, 
+        UserManager<AppUser> userManager)
     {
         _cacheContext = cacheContext;
         _userManager = userManager;
     }
-    public async Task SendMessage(string message, string toUserMail)
+
+    public async Task SendMessageToUser(string toUserMail, MessageWithoutEntities message)
     {
-        var connectionId = await _cacheContext.Connections
+        var issuer = await _cacheContext.Connections
+            .FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
+
+        if (issuer is null) return;
+
+        var user = await _cacheContext.Connections
             .Where(c => c.UserEmail == toUserMail)
-            .Select(c => c.ConnectionId)
             .FirstOrDefaultAsync();
-        if (connectionId is null) return;
-        await Clients.Client(connectionId).SendAsync(EventNames.MessageRecieved, message);
+
+        if (user is null) return;
+        await Clients
+            .Client(user.ConnectionId)
+            .SendAsync(
+                EventNames.MessageRecieved, 
+                new RecievedMessageEventArg()
+                {
+                    IssuerEmail = issuer.UserEmail,
+                    IssuerName = issuer.UserName,
+                    Message = message, 
+                    Status = true
+                });
+    }
+
+    public async Task SendMessageToGroup(string groupId, MessageWithoutEntities message)
+    {
+        var issuer = await _cacheContext.Connections
+            .FirstOrDefaultAsync(c => c.ConnectionId == Context.ConnectionId);
+        
+        if (issuer is null) return;
+
+        // We retrieve the group in the local store
+        var group = (await Utils.RetrieveGroup(_cacheContext, groupId));
+        if (group is null) return;
+        await Clients
+            .GroupExcept(group.Id, issuer.ConnectionId)
+            .SendAsync(
+                EventNames.MessageRecievedFromGroup,
+                new RecievedMessageEventArg()
+                {
+                    IssuerEmail = issuer.UserEmail,
+                    IssuerName = issuer.UserName,
+                    Message = message,
+                    Status = true
+                });
     }
 
     public override async Task OnConnectedAsync()
@@ -34,6 +75,7 @@ public class MessagesHub : Hub
         await _cacheContext.Connections.AddAsync(new ChatUserConnection()
         {
             ConnectionId = Context.ConnectionId,
+            UserName = user.UserName,
             UserEmail = email
         });
         _cacheContext.SaveChanges();
