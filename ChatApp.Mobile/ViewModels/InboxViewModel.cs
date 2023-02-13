@@ -20,7 +20,14 @@ public partial class InboxViewModel : BaseViewModel
     // CONSTRUCTOR
     public InboxViewModel(
         IDisplayService displayService,
-        IMessageConnection messageConnection) : base(messageConnection)
+        IGroupConnection groupConnection,
+        IMessageConnection messageConnection,
+        IOnlineStatusConnection onlineStatusConnection,
+        IMessageStatusConnection messageStatusConnection) : base(
+            groupConnection,
+            messageConnection,
+            onlineStatusConnection,
+            messageStatusConnection)
     {
         _displayService = displayService;
         _messages = new ();

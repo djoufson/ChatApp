@@ -11,7 +11,7 @@ public class MessageStatusConnection : IMessageStatusConnection
     public MessageStatusConnection()
     {
         _connection = new HubConnectionBuilder()
-            .WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}")
+            .WithUrl($"https://localhost:7177/{HubRoutes.MessageStatusRoute}")
             .Build();
 
         Task.Run(async () => await ConnectAsync());

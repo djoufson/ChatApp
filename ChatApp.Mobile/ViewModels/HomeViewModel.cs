@@ -9,18 +9,20 @@ public partial class HomeViewModel : BaseViewModel
     [ObservableProperty] private bool _isRefreshing;
     
     public HomeViewModel(
+        IGroupConnection groupConnection,
         IMessageConnection messageConnection,
+        IOnlineStatusConnection onlineStatusConnection,
+        IMessageStatusConnection messageStatusConnection,
         User user,
-        ShellNavigationService shell) : base(messageConnection)
+        ShellNavigationService shell) : base(
+            groupConnection, 
+            messageConnection, 
+            onlineStatusConnection, 
+            messageStatusConnection)
 	{
         _shell = shell;
         _user = user;
 		_conversations = new ();
-        //Task.Run(async () =>
-        //{
-        //    await LoadConversationsAsync();
-        //    SortConversations();
-        //});
 	}
 
     private void SortConversations()
