@@ -1,13 +1,14 @@
-﻿using ChatApp.Shared.Utilities.EventArgs;
-
-namespace ChatApp.Mobile.ViewModels;
+﻿namespace ChatApp.Mobile.ViewModels;
 
 public partial class BaseViewModel : ObservableObject
 {
-    protected readonly IMessageConnection _chatConnection;
+    private readonly IGroupConnection _groupConnection;
+    private readonly IMessageConnection _messageConnection;
+    private readonly IOnlineStatusConnection _onlineStatusConnection;
+    private readonly IMessageStatusConnection _messageStatusConnection;
     [ObservableProperty] private bool _isBusy;
-    public static string DeviceTokenRoute => Constants.DEVICE_TOKEN_ROUTE;
     public static string LoginRoute => Constants.LOGIN_ROUTE;
+    public static string DeviceTokenRoute => Constants.DEVICE_TOKEN_ROUTE;
     public static string ConversationsRoute => Constants.CONVERSATIONS_ROUTE;
     public static string AuthToken 
     {
@@ -22,22 +23,72 @@ public partial class BaseViewModel : ObservableObject
     }
 
     // CONSTRUCTOR
-    public BaseViewModel(
-        IMessageConnection chatConnection)
-    {
-        // Construction with chat connection
-        _chatConnection = chatConnection;
-        _chatConnection.OnMessageRecieved += MessageRecieved;
-    }
-
     public BaseViewModel()
     {
         // Construction without chat connection
     }
 
-    protected virtual void MessageRecieved(object sender, RecievedMessageEventArg e)
+    // CONSTRUCTOR
+    public BaseViewModel(
+        IGroupConnection groupConnection,
+        IMessageConnection messageConnection,
+        IOnlineStatusConnection onlineStatusConnection,
+        IMessageStatusConnection messageStatusConnection)
     {
-        // When the viewModel Recieves a new message
-        if(_chatConnection is null) throw new NullReferenceException("The class implementation is not provided a chat connection");
+        // Construction with chat connection
+        _groupConnection = groupConnection;
+        _messageConnection = messageConnection;
+        _onlineStatusConnection = onlineStatusConnection;
+        _messageStatusConnection = messageStatusConnection;
+
+        _messageConnection.OnMessageRecieved += OnMessageRecieved;
+        _groupConnection.OnGroupJoined += OnGroupJoined;
+        _groupConnection.OnGroupLeft += OnGroupLeft;
+        _groupConnection.OnRemovedFromGroup += OnRemovedFromGroup;
+        _messageStatusConnection.OnConversationOpened += OnConversationOpened;
+        _messageStatusConnection.OnMessageDelivered += OnMessageDelivered;
+        _onlineStatusConnection.OnlineStatusChanged += OnlineStatusChanged;
+    }
+
+    protected virtual void OnlineStatusChanged(object sender, OnlineStatusChangedEventArgs e)
+    {
+        if (_onlineStatusConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided an onlineStatus Connection");
+    }
+
+    protected virtual void OnMessageDelivered(object sender, MessageDeliveredEventArgs e)
+    {
+        if (_messageStatusConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a messageStatus Connection");
+    }
+
+    protected virtual void OnConversationOpened(object sender, ConversationOpenedEventArgs e)
+    {
+        if (_messageStatusConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a messageStatus Connection");
+    }
+
+    protected virtual void OnRemovedFromGroup(object sender, RemovedFromGroupEventArgs e)
+    {
+        if (_groupConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a group Connection");
+    }
+
+    protected virtual void OnGroupLeft(object sender, GroupLeftEventArgs e)
+    {
+        if (_groupConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a group Connection");
+    }
+
+    protected virtual void OnGroupJoined(object sender, GroupJoinedEventArg e)
+    {
+        if (_groupConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a group Connection");
+    }
+
+    protected virtual void OnMessageRecieved(object sender, RecievedMessageEventArg e)
+    {
+        if(_messageConnection is null) 
+            throw new NullReferenceException("The class implementation is not provided a chat connection");
     }
 }

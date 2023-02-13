@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Mobile.Services.SignalR.Interfaces;
 
-internal interface IMessageStatusConnection : IBaseConnection
+public interface IMessageStatusConnection : IBaseConnection
 {
     event EventHandler<MessageDeliveredEventArgs> OnMessageDelivered;
     event EventHandler<ConversationOpenedEventArgs> OnConversationOpened;
