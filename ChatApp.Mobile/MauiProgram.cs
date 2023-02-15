@@ -25,6 +25,7 @@ public static class MauiProgram
 	{
 		services.AddTransient<LoginPage>();
         services.AddSingleton<HomePage>();
+        services.AddSingleton<GroupsPage>();
         services.AddTransient<InboxPage>();
         services.AddTransient<NewMessagePage>();
         return services;
@@ -46,6 +47,7 @@ public static class MauiProgram
         services.AddTransient<BaseViewModel>();
         services.AddTransient<InboxViewModel>();
         services.AddSingleton<LoginViewModel>();
+        services.AddSingleton<GroupsViewModel>();
         services.AddTransient<NewMessageViewModel>();
         return services;
     }

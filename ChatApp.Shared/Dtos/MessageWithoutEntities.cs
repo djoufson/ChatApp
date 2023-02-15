@@ -13,4 +13,6 @@ public class MessageWithoutEntities
     public int? ConversationId { get; set; }
     public int? GroupId { get; set; }
     public DateTime SentAt { get; set; }
+    public MessageWithoutEntities? Queue { get; set; }
+    public int? QueueId { get; set; }
 }

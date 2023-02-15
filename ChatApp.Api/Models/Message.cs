@@ -24,4 +24,6 @@ public class Message
     public int? GroupId { get; set; } // The id of the related group if exists
     public Group? Group { get; set; } // The related group if exists
     public DateTime SentAt { get; set; }
+    public Message? Queue { get; set; }
+    [ForeignKey(nameof(Message))] public int? QueueId { get; set; }
 }

@@ -22,6 +22,14 @@
                 Route="HomePage" />
         </Tab>
         <Tab
+            Title="Groups"
+            Icon="chat">
+            <ShellContent
+                Title="Groups"
+                ContentTemplate="{DataTemplate appPages:GroupsPage}"
+                Route="GroupsPage" />
+        </Tab>
+        <Tab
             Title="Profile"
             Icon="user">
             <ShellContent

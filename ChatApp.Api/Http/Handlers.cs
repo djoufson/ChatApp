@@ -17,7 +17,7 @@ public static class Handlers
         return new BaseResponseDto<T>()
         {
             Data = data,
-            Message = Message,
+            Message = string.IsNullOrEmpty(Message) ? "Success" : Message,
             Status = true,
             StatusCode = StatusCodes.Status200OK
         };

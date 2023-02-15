@@ -8,30 +8,35 @@ public class GroupController : ControllerBase
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
     private readonly AppDbContext _dbContext;
-    private readonly IMyHttpClient _httpClient;
-    private readonly IConfiguration _configuration;
 
     public GroupController(
         UserManager<AppUser> userManager,
         AppDbContext dbContext,
-        IMyHttpClient client,
-        IConfiguration configuration,
         IMapper mapper)
     {
         _mapper = mapper;
         _userManager = userManager;
         _dbContext = dbContext;
-        _httpClient = client;
-        _configuration = configuration;
     }
 
 
     [HttpGet]
     public async Task<ActionResult<BaseResponseDto<IEnumerable<GroupWithoutEntities>>>> GetGroups()
     {
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
+
         var groups = await _dbContext
             .Groups
             .Include(g => g.Members)
+            .Include(g => g.Messages)
+            .Where(g => g.Members.Contains(user))
             .ToArrayAsync();
         var groupsDto = _mapper.Map<GroupDto[]>(groups);
         return Ok(MyOk(_mapper.Map<GroupWithoutEntities[]>(groupsDto)));
@@ -39,17 +44,30 @@ public class GroupController : ControllerBase
 
 
     [HttpGet]
-    [Route("{id:int}")]
-    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> GetSingleGroup(int id)
+    [Route("{id:int}/message")]
+    public async Task<ActionResult<BaseResponseDto<MessageWithoutEntities[]>>> GetSingleGroupMessages(int id)
     {
-        var groups = await _dbContext
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
+        var group = await _dbContext
             .Groups
             .Include(g => g.Members)
-            .FirstOrDefaultAsync(g => g.Id == id);
+            .Include(g => g.Messages)
+            .FirstOrDefaultAsync(g => g.Id == id && g.Members.Contains(user));
 
-        return Ok(MyOk(groups?.WithoutEntities(_mapper)));
+        if(group is null)
+        return NotFound(MyBadRequest("Group not Found", "The group you requested does not exist"));
+        var messages = group?.Messages;
+        var messagesDto = _mapper.Map<MessageDto[]>(messages);
+
+        return Ok(MyOk(_mapper.Map<MessageWithoutEntities[]>(messagesDto)));
     }
-
 
     [HttpGet]
     [Route("{id:int}/user")]
@@ -68,23 +86,33 @@ public class GroupController : ControllerBase
 
 
     [HttpPost]
-    public async Task<ActionResult<BaseResponseDto<GroupDto>>> CreateGroup(AddGroupDto groupRequest)
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> CreateGroup(AddGroupDto groupRequest)
     {
-        if (groupRequest is null) return BadRequest(MyBadRequest("There are no given parameters"));
-
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
         var usersEmails = groupRequest.MembersMailAddresses;
         var members = await GetUsersByEmailsAsync(usersEmails, _userManager);
         var group = new Group()
         {
-            Name = groupRequest.Name,
+            Name = groupRequest.Name
         };
         if (members is null) return BadRequest(MyBadRequest("The requested users to add do not exist"));
         group.Members = new Collection<AppUser>();
+        group.Members.Add(user);
 
         foreach (var member in members)
-            group.Members.Add(member);
+        {
+            if(!group.Members.Contains(member))
+                group.Members.Add(member);
+        }
 
-        _dbContext.Add(group);
+        await _dbContext.AddAsync(group);
 
         _dbContext.SaveChanges();
 
@@ -94,29 +122,7 @@ public class GroupController : ControllerBase
 
     [HttpPost]
     [Route("{id:int}/user")]
-    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> AddSingleUserToGroup(int id, EmailDto email)
-    {
-        var group = await _dbContext.Groups
-            .Include(g => g.Members)
-            .FirstOrDefaultAsync(g => g.Id == id);
-
-        if (group is null) return BadRequest(MyBadRequest("The requested group does not exist"));
-
-        var user = await _userManager.FindByEmailAsync(email.Email);
-        if (user is null) return BadRequest(MyBadRequest("The requested user to add does not exist"));
-
-        if(group.Members.Contains(user)) return BadRequest(MyBadRequest("The requested user to add is already member of this group"));
-
-        group.Members.Add(user);
-        _dbContext.SaveChanges();
-
-        return Ok(MyOk(group.WithoutEntities(_mapper)));
-    }
-
-
-    [HttpPost]
-    [Route("{id:int}/user/multiple")]
-    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> AddMultipleUsersToGroup(int id, [Required] string[] emails)
+    public async Task<ActionResult<BaseResponseDto<GroupWithoutEntities>>> AddUsersToGroup(int id, [Required] string[] emails)
     {
         var group = await _dbContext.Groups
             .Include(g => g.Members)
@@ -170,4 +176,46 @@ public class GroupController : ControllerBase
 
         return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
+
+
+    [HttpPost]
+    [Route("{id:int}/message")]
+    public async Task<ActionResult> SendMessage([Required] int id, SendMessageToGroupDto message)
+    {
+        AppUser user = null!;
+        try
+        {
+            var (userId, userEmail) = GetUserInfos(User);
+            user = await _userManager.FindByEmailAsync(userEmail);
+            if (user is null) return Unauthorized();
+        }
+        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
+        
+        var group = await _dbContext
+            .Groups
+            .Include(g => g.Members)
+            .Include(g => g.Messages)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if(group is null) { return BadRequest(MyBadRequest("Bad Request", "The supplied group does not exist")); }
+
+        if(!group.Members.Contains(user)) return Unauthorized(MyBadRequest("Unauthorized", "You are not a member of this group"));
+
+        var messageEntity = new Message
+        {
+            FromUserEmail = user.Email,
+            FromUserName = user.UserName,
+            Content = message.Content,
+            Group = group,
+            GroupId = group.Id,
+            FromUserId = user.Id,
+            SentAt = DateTime.Now
+        };
+
+        group.Messages ??= new Collection<Message>();
+        group.Messages.Add(messageEntity);
+        await _dbContext.SaveChangesAsync();
+        return Ok(MyOk(messageEntity.WithoutEntities(_mapper), Message: "Message sent successfuly"));
+    }
+
 }

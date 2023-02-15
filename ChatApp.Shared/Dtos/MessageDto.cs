@@ -15,4 +15,6 @@ public class MessageDto
     public int? GroupId { get; set; }
     public GroupDto? Group { get; set; }
     public DateTime SentAt { get; set; }
+    public MessageDto? Queue { get; set; }
+    public int? QueueId { get; set; }
 }

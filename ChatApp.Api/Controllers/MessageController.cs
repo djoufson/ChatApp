@@ -90,44 +90,4 @@ public class MessageController : ControllerBase
         _dbContext.SaveChanges();
         return Ok(MyOk(messsageDto));
     }
-
-    [HttpPost]
-    [Route("group/{id:int}")]
-    public async Task<ActionResult<MessageWithoutEntities>> SendToGroup([Required] int id, SendMessageToGroupDto message)
-    {
-        AppUser user = null!;
-        try
-        {
-            var (userId, userEmail) = GetUserInfos(User);
-            user = await _userManager.FindByEmailAsync(userEmail);
-            if (user is null) return Unauthorized();
-        }
-        catch (Exception e) { return Unauthorized(MyBadRequest("Unauthorized", e.Message)); }
-
-        var group = await _dbContext
-            .Groups
-            .Include(g => g.Members)
-            .Include(g => g.Messages)
-            .FirstOrDefaultAsync(g => g.Id == id);
-
-        if(group is null) { return BadRequest(MyBadRequest("Bad Request", "The supplied group does not exist")); }
-
-        if(!group.Members.Contains(user)) return Unauthorized(MyBadRequest("Unauthorized", "You are not a member of this group"));
-
-        var messageEntity = new Message
-        {
-            FromUserEmail = user.Email,
-            FromUserName = user.UserName,
-            Content = message.Content,
-            Group = group,
-            GroupId = group.Id,
-            FromUserId = user.Id,
-            SentAt = DateTime.Now
-        };
-
-        group.Messages ??= new Collection<Message>();
-        group.Messages.Add(messageEntity);
-        await _dbContext.SaveChangesAsync();
-        return Ok(MyOk(messageEntity.WithoutEntities(_mapper), Message: "Message sent successfuly"));
-    }
 }

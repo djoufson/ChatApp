@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
+             xmlns:models="clr-namespace:ChatApp.Mobile.Models"
+             xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
+             x:Class="ChatApp.Mobile.Pages.App.GroupsPage"
+             x:DataType="vm:GroupsViewModel"
+             Title="Groups">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid
+        RowDefinitions="Auto, *"
+        ColumnDefinitions="*, Auto">
+        <ActivityIndicator
+            Grid.ColumnSpan="2"
+            Grid.RowSpan="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            HeightRequest="50"
+            WidthRequest="50"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"/>
+
+        <ListView
+            Grid.Row="1"
+            SelectionMode="None"
+            HasUnevenRows="True"
+            SeparatorVisibility="None"
+            IsRefreshing="{Binding IsRefreshing}"
+            RefreshCommand="{Binding RefreshCommand}"
+            ItemsSource="{Binding Groups}"
+            ItemTapped="ConversationTapped"
+            IsPullToRefreshEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell
+                        x:DataType="models:Group">
+                        <ViewCell.ContextActions>
+                            <MenuItem
+                                Text="Pin"/>
+                            <MenuItem
+                                Text="Delete"
+                                IsDestructive="True"/>
+                        </ViewCell.ContextActions>
+                        <Grid
+                            Padding="10, 5"
+                            ColumnDefinitions="Auto, *, Auto"
+                            ColumnSpacing="5">
+                            <Frame
+                                Padding="0"
+                                CornerRadius="100">
+                                <Grid>
+                                    <Image
+                                        Source="useravatar"
+                                        WidthRequest="60"
+                                        HeightRequest="60"
+                                        Aspect="AspectFill"/>
+                                    <ImageButton
+                                        WidthRequest="60"
+                                        HeightRequest="60"
+                                        CornerRadius="100"/>
+                                </Grid>
+                            </Frame>
+                            <StackLayout
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontSize="16"
+                                    FontAttributes="Bold"/>
+                                <Label
+                                    LineBreakMode="TailTruncation">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{0} : {1}">
+                                            <Binding Path="LastMessage.FromUserName" Converter="{StaticResource SenderMessageConverter}"/>
+                                            <Binding Path="LastMessage.Content"/>
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
+                            </StackLayout>
+                            <StackLayout
+                                Grid.Column="2"
+                                VerticalOptions="Center">
+                                <Label
+                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:dd-MM-yyy}'}"
+                                    HorizontalTextAlignment="End"/>
+                                <Label
+                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:hh:mm}'}"
+                                    HorizontalTextAlignment="End"/>
+                            </StackLayout>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentPage>
