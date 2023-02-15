@@ -9,7 +9,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
 	}
 
 	// DbSets
-	public DbSet<Message> Messages { get; set; }
-	public DbSet<Group> Groups { get; set; }
-	public DbSet<Conversation> Conversations { get; set; }
+	public DbSet<Message> Messages { get; set; } = null!;
+	public DbSet<Group> Groups { get; set; } = null!;
+	public DbSet<Conversation> Conversations { get; set; } = null!;
 }

@@ -6,6 +6,7 @@ public partial class BaseViewModel : ObservableObject
     private readonly IMessageConnection _messageConnection;
     private readonly IOnlineStatusConnection _onlineStatusConnection;
     private readonly IMessageStatusConnection _messageStatusConnection;
+
     [ObservableProperty] private bool _isBusy;
     public static string LoginRoute => Constants.LOGIN_ROUTE;
     public static string DeviceTokenRoute => Constants.DEVICE_TOKEN_ROUTE;
@@ -16,7 +17,7 @@ public partial class BaseViewModel : ObservableObject
         set => Preferences.Set(Constants.AUTH_TOKEN_KEY, value); 
     }
 
-    public static string DeviceToken
+    public static string DeviceToken 
     {
         get => Preferences.Get(Constants.DEVICE_TOKEN_KEY, "");
         set => Preferences.Set(Constants.DEVICE_TOKEN_KEY, value);

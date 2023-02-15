@@ -10,12 +10,6 @@ public partial class HomePage : ContentPage
 		InitializeComponent();
 	}
 
-	protected override async void OnAppearing()
-	{
-		base.OnAppearing();
-		await _viewModel.LoadConversationsAsync();
-	}
-
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)
 	{
 		var conversation = e.Item as Conversation;

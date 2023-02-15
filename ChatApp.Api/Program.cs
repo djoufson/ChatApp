@@ -116,7 +116,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Map hub endpoints
+// Mapping hubs endpoints
 app.MapHub<MessagesHub>($"/{HubRoutes.MessagesRoute}");
 app.MapHub<GroupHub>($"/{HubRoutes.GroupsRoute}");
 app.MapHub<OnlineStatusHub>($"/{HubRoutes.OnlineStatusRoute}");

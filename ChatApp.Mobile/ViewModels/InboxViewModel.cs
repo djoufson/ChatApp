@@ -95,4 +95,30 @@ public partial class InboxViewModel : BaseViewModel
     {
         OnLoadCompleted?.Invoke(this, new EventArgs());
     }
+
+    // When recieving a new Message
+    protected override void OnMessageRecieved(object sender, RecievedMessageEventArg e)
+    {
+        base.OnMessageRecieved(sender, e);
+        if (
+            e.Message is null ||
+            !e.Status ||
+            e.IssuerEmail != WithUserEmail) 
+            return;
+
+        Messages.Add(e.Message);
+    }
+
+    // When the connectivity status changes
+    protected override void OnlineStatusChanged(object sender, OnlineStatusChangedEventArgs e)
+    {
+        base.OnlineStatusChanged(sender, e);
+        if (
+            !e.Status ||
+            e.ConversationId != ConversationId ||
+            e.UserEmail != WithUserEmail) 
+            return;
+
+        // Update Status on the view
+    }
 }

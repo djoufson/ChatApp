@@ -3,6 +3,7 @@ namespace ChatApp.Mobile.ViewModels;
 
 public partial class HomeViewModel : BaseViewModel
 {
+    private readonly IDisplayService _displayService;
     private readonly ShellNavigationService _shell;
     [ObservableProperty] User _user;
 	[ObservableProperty] ObservableCollection<Conversation> _conversations;
@@ -13,6 +14,7 @@ public partial class HomeViewModel : BaseViewModel
         IMessageConnection messageConnection,
         IOnlineStatusConnection onlineStatusConnection,
         IMessageStatusConnection messageStatusConnection,
+        IDisplayService displayService,
         User user,
         ShellNavigationService shell) : base(
             groupConnection, 
@@ -20,9 +22,12 @@ public partial class HomeViewModel : BaseViewModel
             onlineStatusConnection, 
             messageStatusConnection)
 	{
+        _displayService = displayService;
         _shell = shell;
         _user = user;
 		_conversations = new ();
+
+        Task.Run(async () => await LoadConversationsAsync());
 	}
 
     private void SortConversations()
@@ -32,7 +37,30 @@ public partial class HomeViewModel : BaseViewModel
             .Reverse());
     }
 
-	public async Task LoadConversationsAsync()
+    #region OVERRIDES
+    // When recieving a new Message
+    protected override void OnMessageRecieved(object sender, RecievedMessageEventArg e)
+    {
+        base.OnMessageRecieved(sender, e);
+        var conversation = Conversations.FirstOrDefault(c => c.ToUserEmail == e.IssuerEmail); 
+        if(conversation is null)
+        {
+            conversation = new Conversation()
+            {
+                Messages = new Collection<MessageWithoutEntities>(),
+            };
+            Conversations.Add(conversation);
+        }
+        conversation.Messages.Add(e.Message);
+        OnPropertyChanged(nameof(Conversations));
+    }
+
+    protected override void OnMessageDelivered(object sender, MessageDeliveredEventArgs e)
+    {
+        base.OnMessageDelivered(sender, e);
+    }
+    #endregion
+    private async Task LoadConversationsAsync()
     {
         try
         {
@@ -44,7 +72,7 @@ public partial class HomeViewModel : BaseViewModel
 
             if (response is null)
             {
-                await _shell.Current.DisplayAlert("Error", "Wrong Credentials", "OK");
+                await _displayService.DisplayAlert("Error", "Wrong Credentials", "OK");
                 return;
             }
 
@@ -55,10 +83,11 @@ public partial class HomeViewModel : BaseViewModel
         catch (Exception e)
         {
             Debug.WriteLine(e.Message);
-            await _shell.Current.DisplayAlert("Error", e.Message, "OK");
+            await _displayService.DisplayAlert("Error", e.Message, "OK");
         }
     }
 
+    #region COMMANDS
 
     [RelayCommand]
     private async Task RefreshAsync()
@@ -82,4 +111,5 @@ public partial class HomeViewModel : BaseViewModel
     {
         return _shell.GoToAsync(nameof(NewMessagePage));
     }
+    #endregion
 }
