@@ -4,19 +4,10 @@
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              xmlns:models="clr-namespace:ChatApp.Mobile.Models"
              xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
-             x:DataType="vm:HomeViewModel"
-             x:Class="ChatApp.Mobile.Pages.App.HomePage"
-             Title="Chat">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem 
-            Text="New Message"
-            Order="{OnPlatform Android=Secondary, iOS=Primary}"
-            Command="{Binding NewMessageCommand}"/>
-        <ToolbarItem 
-            Text="New Group"
-            Order="{OnPlatform Android=Secondary, iOS=Primary}"
-            Command="{Binding NewMessageCommand}"/>
-    </ContentPage.ToolbarItems>
+             x:Class="ChatApp.Mobile.Pages.App.Mobile.GroupsPage"
+             x:DataType="vm:GroupsViewModel"
+             Title="Groups">
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
@@ -43,13 +34,13 @@
             SeparatorVisibility="None"
             IsRefreshing="{Binding IsRefreshing}"
             RefreshCommand="{Binding RefreshCommand}"
-            ItemsSource="{Binding Conversations}"
+            ItemsSource="{Binding Groups}"
             ItemTapped="ConversationTapped"
             IsPullToRefreshEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell
-                        x:DataType="models:Conversation">
+                        x:DataType="models:Group">
                         <ViewCell.ContextActions>
                             <MenuItem
                                 Text="Pin"/>
@@ -81,7 +72,7 @@
                                 Margin="5,0,0,0"
                                 VerticalOptions="Center">
                                 <Label
-                                    Text="{Binding ToUserName}"
+                                    Text="{Binding Name}"
                                     FontSize="16"
                                     FontAttributes="Bold"/>
                                 <Label

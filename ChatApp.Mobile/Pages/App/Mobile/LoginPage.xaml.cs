@@ -1,6 +1,4 @@
-using ChatApp.Mobile.ViewModels;
-
-namespace ChatApp.Mobile.Pages;
+namespace ChatApp.Mobile.Pages.App.Mobile;
 
 public partial class LoginPage : ContentPage
 {

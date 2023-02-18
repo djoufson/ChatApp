@@ -5,7 +5,7 @@
              xmlns:model="clr-namespace:ChatApp.Mobile.Models"
              xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
              x:DataType="vm:InboxViewModel"
-             x:Class="ChatApp.Mobile.Pages.App.InboxPage"
+             x:Class="ChatApp.Mobile.Pages.App.Desktop.InboxPageDesktop"
              Shell.TabBarIsVisible="False"
              Title="{Binding WithUserName}">
     <ContentPage.Resources>
@@ -15,7 +15,7 @@
             <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <Grid
         RowDefinitions="*,Auto"
         Padding="10">

@@ -1,8 +1,8 @@
-﻿namespace ChatApp.Mobile;
+﻿namespace ChatApp.Mobile.Shells;
 
-public partial class AppShell : Shell
+public partial class MobileShell : Shell
 {
-	public AppShell()
+	public MobileShell()
 	{
 		InitializeComponent();
 		Routing.RegisterRoute(nameof(InboxPage), typeof(InboxPage));

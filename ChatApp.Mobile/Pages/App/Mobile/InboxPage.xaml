@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
+             xmlns:model="clr-namespace:ChatApp.Mobile.Models"
+             xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
+             x:DataType="vm:InboxViewModel"
+             x:Class="ChatApp.Mobile.Pages.App.Mobile.InboxPage"
+             Shell.TabBarIsVisible="False"
+             Title="{Binding WithUserName}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:MessageSideAlignmentConverter x:Key="MessageSideAlignmentConverter" />
+            <converters:ColumnConverter x:Key="ColumnConverter" />
+            <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <Grid
+        RowDefinitions="*,Auto"
+        Padding="10">
+        <CollectionView
+            x:Name="messagesList"
+            ItemsSource="{Binding Messages}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout
+                    Orientation="Vertical"
+                    ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate
+                    x:DataType="model:Message">
+                    <Grid
+                        RowDefinitions="Auto, Auto"
+                        ColumnDefinitions="*,*,*">
+                        <Frame
+                            Grid.Column="{Binding FromUserEmail, Converter={StaticResource ColumnConverter}}"
+                            Grid.ColumnSpan="2"
+                            Padding="0"
+                            HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}">
+                            <Grid
+                                RowDefinitions="Auto, Auto"
+                                Padding="10">
+                                <Label
+                                    Text="{Binding FromUserName, Converter={StaticResource SenderMessageConverter}}"
+                                    FontSize="12"
+                                    TextColor="{StaticResource Primary}"
+                                    HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
+                                    FontAttributes="Bold"/>
+                                <Label
+                                    Grid.Row="1"
+                                    Text="{Binding Content}"
+                                    LineBreakMode="WordWrap"/>
+                            </Grid>
+                        </Frame>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="{Binding FromUserEmail, Converter={StaticResource ColumnConverter}}"
+                            Grid.ColumnSpan="3"
+                            Margin="5, 0"
+                            HorizontalOptions="{Binding FromUserEmail, Converter={StaticResource MessageSideAlignmentConverter}}"
+                            Text="{Binding SentAt, StringFormat='{0:hh:mm}'}"
+                            FontSize="10"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <StackLayout
+            Margin="10"
+            Orientation="Horizontal"
+            Grid.Row="1"
+            Spacing="10">
+            <Frame
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Padding="5">
+                <ScrollView
+                    VerticalOptions="EndAndExpand"
+                    MaximumHeightRequest="200">
+                    <Editor
+                        Text="{Binding Message}"
+                        AutoSize="TextChanges"
+                        Keyboard="Chat"
+                        Placeholder="Enter your message"
+                        IsSpellCheckEnabled="True"
+                        MaxLength="600"/>
+                </ScrollView>
+            </Frame>
+            <Button 
+                Text="Send"
+                Command="{Binding SendCommand}"
+                Padding="15"
+                Margin="10,0,0,0"
+                VerticalOptions="EndAndExpand"/>
+        </StackLayout>
+    </Grid>
+</ContentPage>

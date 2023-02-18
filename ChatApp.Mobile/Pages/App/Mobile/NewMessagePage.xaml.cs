@@ -1,8 +1,8 @@
-namespace ChatApp.Mobile.Pages.App;
+namespace ChatApp.Mobile.Pages.App.Mobile;
 
 public partial class NewMessagePage : ContentPage
 {
-	NewMessageViewModel _viewModel;
+	private readonly NewMessageViewModel _viewModel;
     public NewMessagePage(NewMessageViewModel viewModel)
 	{
 		_viewModel = viewModel;

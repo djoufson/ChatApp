@@ -4,9 +4,9 @@
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              xmlns:models="clr-namespace:ChatApp.Mobile.Models"
              xmlns:converters="clr-namespace:ChatApp.Mobile.Converters"
-             x:Class="ChatApp.Mobile.Pages.App.GroupsPage"
+             x:Class="ChatApp.Mobile.Pages.App.Desktop.GroupsPageDesktop"
              x:DataType="vm:GroupsViewModel"
-             Title="Groups">
+             Title="GroupsPageDesktop">
 
     <ContentPage.Resources>
         <ResourceDictionary>

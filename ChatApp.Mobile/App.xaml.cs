@@ -16,7 +16,10 @@ public partial class App : Application
     public App()
 	{
 		InitializeComponent();
+		var isDesktop = DeviceProperties.IsDesktop;
 
-		MainPage = new AppShell();
+        MainPage = isDesktop ? 
+			new DesktopShell() : 
+			new MobileShell();
 	}
 }

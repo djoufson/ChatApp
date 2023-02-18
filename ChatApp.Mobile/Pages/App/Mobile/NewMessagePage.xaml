@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              xmlns:md="clr-namespace:ChatApp.Mobile.Models"
-             x:Class="ChatApp.Mobile.Pages.App.NewMessagePage"
+             x:Class="ChatApp.Mobile.Pages.App.Mobile.NewMessagePage"
              x:DataType="vm:NewMessageViewModel"
              Title="New Message">
     <Grid

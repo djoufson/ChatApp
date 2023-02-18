@@ -20,12 +20,13 @@ public class MyClient
     /// <exception cref="ArgumentNullException"></exception>
     public static async Task<T> SendRequestAsync<T>(MyHttpMethods method, string url, Dictionary<string, string> content = null, string auth = null)
     {
-#if DEBUG
+#if DEBUG && ANDROID
         var devSslHelper = new DevHttpsConnectionHelper(Constants.PORT);
         using var client = devSslHelper.HttpClient;
         client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BASE_URL}");
 #else
 		using var client = new HttpClient();
+        Debug.WriteLine(Constants.FULL_BASE_URL);
         client.BaseAddress = new Uri(Constants.FULL_BASE_URL);
 #endif
         JsonContent stringContent = null;

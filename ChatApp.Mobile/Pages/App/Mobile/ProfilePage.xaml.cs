@@ -1,4 +1,4 @@
-namespace ChatApp.Mobile.Pages.App;
+namespace ChatApp.Mobile.Pages.App.Mobile;
 
 public partial class ProfilePage : ContentPage
 {

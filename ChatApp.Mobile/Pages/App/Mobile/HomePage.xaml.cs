@@ -1,8 +1,8 @@
-namespace ChatApp.Mobile.Pages.App;
+namespace ChatApp.Mobile.Pages.App.Mobile;
 
 public partial class HomePage : ContentPage
 {
-	private HomeViewModel _viewModel;
+	private readonly HomeViewModel _viewModel;
 	public HomePage(HomeViewModel viewModel)
 	{
 		_viewModel = viewModel;

@@ -81,27 +81,56 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\ChatApp.Shared\ChatApp.Shared.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Shells\MobileShell.xaml.cs">
+	    <DependentUpon>MobileShell.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\App\GroupsPage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\GroupsPageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\App\HomePage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\HomePageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\App\InboxPage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\InboxPageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\App\NewMessagePage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\LoginPageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\App\ProfilePage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\NewMessagePageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\App\SettingsPage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\ProfilePageDesktop.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\LoginPage.xaml">
+	  <MauiXaml Update="Pages\App\Desktop\SettingsPageDesktop.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Shells\DesktopShell.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\GroupsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\InboxPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\NewMessagePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\ProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\App\Mobile\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

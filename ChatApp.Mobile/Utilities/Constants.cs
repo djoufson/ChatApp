@@ -4,14 +4,12 @@ public class Constants
 {
     public const int PORT = 7177;
     public const string BASE_URL = "api/v1/";
-    public static readonly string FULL_BASE_URL = $"https://localhost:{PORT}api/v1/";
+    public static readonly string FULL_BASE_URL = $"https://localhost:{PORT}/api/v1/";
     public static string DEV_SERVER_NAME =>
-#if WINDOWS
-        "localhost";
-#elif ANDROID
+#if ANDROID
         "10.0.2.2";
 #else
-        throw new PlatformNotSupportedException("Only Windows and Android currently supported.");
+        "localhost";
 #endif
 
     public const string AUTH_TOKEN_KEY = "Auth_Token";

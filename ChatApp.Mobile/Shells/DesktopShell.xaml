@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="ChatApp.Mobile.Shells.DesktopShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:appPages="clr-namespace:ChatApp.Mobile.Pages.App.Desktop">
+
+    <TabBar>
+        <ShellContent
+            Title="Login"
+            ContentTemplate="{DataTemplate appPages:LoginPageDesktop}"
+            Route="LoginPage" />
+    </TabBar>
+
+    <FlyoutItem
+        Title="Chat"
+        Icon="chat">
+        <ShellContent
+            Title="Chat"
+            ContentTemplate="{DataTemplate appPages:HomePageDesktop}"
+            Route="HomePage" />
+    </FlyoutItem>
+    <FlyoutItem
+        Title="Groups"
+        Icon="chat">
+        <ShellContent
+            Title="Groups"
+            ContentTemplate="{DataTemplate appPages:GroupsPageDesktop}"
+            Route="GroupsPage" />
+    </FlyoutItem>
+    <FlyoutItem
+        Title="Profile"
+        Icon="user">
+        <ShellContent
+            Title="Profile"
+            ContentTemplate="{DataTemplate appPages:ProfilePageDesktop}"
+            Route="ProfilePage" />
+    </FlyoutItem>
+    <FlyoutItem
+        Title="Settings"
+        Icon="settings">
+        <ShellContent
+            Title="Settings"
+            ContentTemplate="{DataTemplate appPages:SettingsPageDesktop}"
+            Route="SettingsPage" />
+    </FlyoutItem>
+</Shell>
