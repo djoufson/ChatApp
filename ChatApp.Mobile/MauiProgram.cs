@@ -50,7 +50,8 @@ public static class MauiProgram
     private static IServiceCollection RegisterServices(this IServiceCollection services)
 	{
         services.AddSingleton<User>();
-		services.AddSingleton<ShellNavigationService>();
+        services.AddSingleton<DbManager>();
+        services.AddSingleton<ShellNavigationService>();
         services.AddSingleton<IDisplayService, DisplayService>();
         services.AddSingleton<IServiceProvider, ServiceProvider>();
         return services;

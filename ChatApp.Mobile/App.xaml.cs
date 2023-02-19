@@ -2,6 +2,7 @@
 
 public partial class App : Application
 {
+    public static string AuthToken => Preferences.Get(Constants.AUTH_TOKEN_KEY, "");
 	public static string UserEmail 
 	{
 		get => Preferences.Get(Constants.USER_EMAIL_KEY, "");

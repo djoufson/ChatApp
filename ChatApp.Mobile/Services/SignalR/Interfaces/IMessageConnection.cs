@@ -3,5 +3,5 @@
 public interface IMessageConnection : IBaseConnection
 {
     event EventHandler<RecievedMessageEventArg> OnMessageRecieved;
-    Task SendMessageToAsync(string toUserEmail, string content);
+    Task SendMessageToAsync(string toUserEmail, MessageWithoutEntities content);
 }

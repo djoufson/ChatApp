@@ -16,9 +16,9 @@ public partial class InboxPage : ContentPage
 		messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, false);
 	}
 
-	protected override async void OnAppearing()
+	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		await _viewModel.LoadMessagesCommand.ExecuteAsync(this);
+		_viewModel.LoadMessagesCommand.Execute(this);
 	}
 }

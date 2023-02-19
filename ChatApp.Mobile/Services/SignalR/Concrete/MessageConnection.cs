@@ -7,10 +7,23 @@ public class MessageConnection : IMessageConnection
     public MessageConnection()
     {
         _connection = new HubConnectionBuilder()
-			.WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}")
+			.WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}", (options) =>
+            {
+                options.Headers.Add("access_token", App.AuthToken);
+            })
             .Build();
         
-        Task.Run(async () => await ConnectAsync());
+        Task.Run(() =>
+        {
+            App.Current.MainPage.Dispatcher.Dispatch(async () =>
+            {
+                try
+                {
+                    await ConnectAsync();
+                }
+                catch (Exception) { }
+            });
+        });
         _connection.On<RecievedMessageEventArg>(EventNames.MessageRecieved, MessageRecieved);
     }
 
@@ -32,9 +45,9 @@ public class MessageConnection : IMessageConnection
         return _connection.StopAsync();
     }
 
-    public Task SendMessageToAsync(string toUserEmail, string content)
+    public Task SendMessageToAsync(string toUserEmail, MessageWithoutEntities content)
     {
-        return _connection.InvokeCoreAsync(EventNames.SendMessageToUser, new[] { toUserEmail, content });
+        return _connection.InvokeCoreAsync(EventNames.SendMessageToUser, new object[] { toUserEmail, content });
     }
     #endregion
 }

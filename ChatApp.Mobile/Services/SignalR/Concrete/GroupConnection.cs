@@ -12,10 +12,23 @@ public class GroupConnection : IGroupConnection
     public GroupConnection()
     {
         _connection = new HubConnectionBuilder()
-			.WithUrl($"https://localhost:7177/{HubRoutes.GroupsRoute}")
+			.WithUrl($"https://localhost:7177/{HubRoutes.GroupsRoute}", (options) =>
+            {
+                options.Headers.Add("access_token", App.AuthToken);
+            })
             .Build();
 
-        Task.Run(async () => await ConnectAsync());
+        Task.Run(() =>
+        {
+            App.Current.MainPage.Dispatcher.Dispatch(async () =>
+            {
+                try
+                {
+                    await ConnectAsync();
+                }
+                catch (Exception) { }
+            });
+        });
         _connection.On<GroupJoinedEventArg>(EventNames.GroupJoined, GroupJoined);
         _connection.On<AddedToGroupEventArgs>(EventNames.AddedToGroup, AddedToGroup);
         _connection.On<RemovedFromGroupEventArgs>(EventNames.RemovedFromGroup, RemovedFromGroup);

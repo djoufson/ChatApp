@@ -71,7 +71,7 @@ builder.Services.AddAuthentication(options =>
         {
             OnMessageReceived = context =>
             {
-                var accessToken = context.Request.Query["eccess_token"];
+                var accessToken = context.Request.Headers["access_token"];
                 if (!string.IsNullOrEmpty(accessToken))
                     context.Token = accessToken;
                 return Task.CompletedTask;

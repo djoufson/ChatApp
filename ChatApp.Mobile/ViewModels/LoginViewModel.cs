@@ -8,13 +8,16 @@ public partial class LoginViewModel : BaseViewModel
     [ObservableProperty] private string _userEmail;
     [ObservableProperty] private string _userPassword;
     [ObservableProperty] private bool _isBusy;
+    private readonly DbManager _dbManager;
     private readonly User _user;
     private readonly ShellNavigationService _shell;
 
     public LoginViewModel(
+        DbManager dbManager,
         ShellNavigationService shell,
         User user)
     {
+        _dbManager = dbManager;
         _user = user;
         _shell = shell;
         _userEmail = "djoufson@example.com";
@@ -22,7 +25,7 @@ public partial class LoginViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    public async Task LoginAsync()
+    public async void Login()
     {
         IsBusy = true;
         var content = new Dictionary<string, string>()
@@ -39,6 +42,9 @@ public partial class LoginViewModel : BaseViewModel
                 await _shell.Current.DisplayAlert("Error", "Wrong Credentials", "OK");
                 return;
             }
+            if (response.User.Email != App.UserEmail)
+                DbManager.ClearPreferences();
+
             App.UserEmail = response.User.Email;
             App.UserName = response.User.UserName;
             AuthToken = response.Token;

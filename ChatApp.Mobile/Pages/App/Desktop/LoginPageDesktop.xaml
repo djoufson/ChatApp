@@ -21,6 +21,7 @@
                 Placeholder="Enter your email"/>
             <Entry
                 Text="{Binding UserPassword}"
+                IsPassword="True"
                 Placeholder="Enter your password"/>
             <Button
                 Text="Login"

@@ -4,7 +4,7 @@ public class Constants
 {
     public const int PORT = 7177;
     public const string BASE_URL = "api/v1/";
-    public static readonly string FULL_BASE_URL = $"https://localhost:{PORT}/api/v1/";
+    public static readonly string FULL_API_BASE_URL = $"https://localhost:{PORT}/api/v1/";
     public static string DEV_SERVER_NAME =>
 #if ANDROID
         "10.0.2.2";
@@ -12,6 +12,7 @@ public class Constants
         "localhost";
 #endif
 
+    public static readonly string FULL_URL = $"https://localhost:{PORT}";
     public const string AUTH_TOKEN_KEY = "Auth_Token";
     public const string DEVICE_TOKEN_KEY = "Device_Token";
     public const string USER_EMAIL_KEY = "User_Email";

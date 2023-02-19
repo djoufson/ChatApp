@@ -6,19 +6,13 @@ public partial class InboxPageDesktop : ContentPage
     public InboxPageDesktop(InboxViewModel viewModel)
     {
         _viewModel = viewModel;
-        _viewModel.OnLoadCompleted += LoadCompleted;
         BindingContext = _viewModel;
         InitializeComponent();
 	}
 
-    private void LoadCompleted(object sender, EventArgs e)
-    {
-        messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, false);
-    }
-
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadMessagesCommand.ExecuteAsync(this);
+        _viewModel.LoadMessagesCommand.Execute(this);
     }
 }

@@ -11,10 +11,23 @@ public class MessageStatusConnection : IMessageStatusConnection
     public MessageStatusConnection()
     {
         _connection = new HubConnectionBuilder()
-            .WithUrl($"https://localhost:7177/{HubRoutes.MessageStatusRoute}")
+            .WithUrl($"https://localhost:7177/{HubRoutes.MessageStatusRoute}", (options) =>
+            {
+                options.Headers.Add("access_token", App.AuthToken);
+            })
             .Build();
 
-        Task.Run(async () => await ConnectAsync());
+        Task.Run(() =>
+        {
+            App.Current.MainPage.Dispatcher.Dispatch(async () =>
+            {
+                try
+                {
+                    await ConnectAsync();
+                }
+                catch(Exception) { }
+            });
+        });
         _connection.On<MessageDeliveredEventArgs>(EventNames.MessageDelivered, MessageDelivered);
         _connection.On<ConversationOpenedEventArgs>(EventNames.ConversationOpened, ConversationOpened);
     }

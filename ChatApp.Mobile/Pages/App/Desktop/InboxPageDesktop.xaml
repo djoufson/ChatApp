@@ -8,6 +8,7 @@
              x:Class="ChatApp.Mobile.Pages.App.Desktop.InboxPageDesktop"
              Shell.TabBarIsVisible="False"
              Title="{Binding WithUserName}">
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:MessageSideAlignmentConverter x:Key="MessageSideAlignmentConverter" />
@@ -17,8 +18,9 @@
     </ContentPage.Resources>
 
     <Grid
-        RowDefinitions="*,Auto"
+        RowDefinitions="*,Auto, Auto"
         Padding="10">
+
         <CollectionView
             x:Name="messagesList"
             ItemsSource="{Binding Messages}">
@@ -66,33 +68,24 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <StackLayout
-            Margin="10"
-            Orientation="Horizontal"
+
+        <Editor
             Grid.Row="1"
-            Spacing="10">
-            <Frame
-                VerticalOptions="EndAndExpand"
-                HorizontalOptions="FillAndExpand"
-                Padding="5">
-                <ScrollView
-                    VerticalOptions="EndAndExpand"
-                    MaximumHeightRequest="200">
-                    <Editor
-                        Text="{Binding Message}"
-                        AutoSize="TextChanges"
-                        Keyboard="Chat"
-                        Placeholder="Enter your message"
-                        IsSpellCheckEnabled="True"
-                        MaxLength="600"/>
-                </ScrollView>
-            </Frame>
-            <Button 
-                Text="Send"
-                Command="{Binding SendCommand}"
-                Padding="15"
-                Margin="10,0,0,0"
-                VerticalOptions="EndAndExpand"/>
-        </StackLayout>
+            MaximumHeightRequest="200"
+            HorizontalOptions="FillAndExpand"
+            Text="{Binding Message}"
+            AutoSize="TextChanges"
+            Keyboard="Chat"
+            Placeholder="Enter your message"
+            IsSpellCheckEnabled="True"
+            MaxLength="600"/>
+
+        <Button 
+            Grid.Row="2"
+            Text="Send"
+            Command="{Binding SendCommand}"
+            Padding="15"
+            Margin="10,0,0,0"
+            HorizontalOptions="End"/>
     </Grid>
 </ContentPage>

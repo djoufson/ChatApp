@@ -15,6 +15,9 @@ public partial class InboxViewModel : BaseViewModel
     [ObservableProperty] private ObservableCollection<MessageWithoutEntities> _messages;
     
     private readonly IDisplayService _displayService;
+    private readonly IGroupConnection _groupConnection;
+    private readonly IMessageConnection _messageConnection;
+    private readonly IOnlineStatusConnection _onlineStatusConnection;
     public event EventHandler OnLoadCompleted;
 
     // CONSTRUCTOR
@@ -30,11 +33,14 @@ public partial class InboxViewModel : BaseViewModel
             messageStatusConnection)
     {
         _displayService = displayService;
+        _groupConnection = groupConnection;
+        _messageConnection = messageConnection;
+        _onlineStatusConnection = onlineStatusConnection;
         _messages = new ();
     }
 
     [RelayCommand]
-    private async Task SendAsync()
+    private async void Send()
     {
         var messageContent = new Dictionary<string, string>()
         {
@@ -45,6 +51,7 @@ public partial class InboxViewModel : BaseViewModel
         {
             var response = await MyClient.SendRequestAsync<BaseResponseDto<MessageWithoutEntities>>(MyHttpMethods.POST, "message", messageContent, AuthToken);
             if (response is null) return;
+            await _messageConnection.SendMessageToAsync(WithUserEmail, response.Data);
             Message = string.Empty;
             Messages.Add(response.Data);
         }
@@ -56,7 +63,7 @@ public partial class InboxViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task LoadMessagesAsync()
+    private async void LoadMessages()
     {
         IsBusy = true;
         BaseResponseDto<MessageWithoutEntities[]> response = null;
