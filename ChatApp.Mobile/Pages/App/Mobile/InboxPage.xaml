@@ -79,7 +79,9 @@
                     VerticalOptions="EndAndExpand"
                     MaximumHeightRequest="200">
                     <Editor
+                        x:Name="editor"
                         Text="{Binding Message}"
+                        Focused="HandleEditorFocused"
                         AutoSize="TextChanges"
                         Keyboard="Chat"
                         Placeholder="Enter your message"

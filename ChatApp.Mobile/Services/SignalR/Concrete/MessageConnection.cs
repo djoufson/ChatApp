@@ -7,7 +7,7 @@ public class MessageConnection : IMessageConnection
     public MessageConnection()
     {
         _connection = new HubConnectionBuilder()
-			.WithUrl($"https://localhost:7177/{HubRoutes.MessagesRoute}", (options) =>
+			.WithUrl($"{Constants.FULL_URL}/{HubRoutes.MessagesRoute}", (options) =>
             {
                 options.Headers.Add("access_token", App.AuthToken);
             })
@@ -21,7 +21,10 @@ public class MessageConnection : IMessageConnection
                 {
                     await ConnectAsync();
                 }
-                catch (Exception) { }
+                catch (Exception e) 
+                {
+                    Debug.WriteLine(e);
+                }
             });
         });
         _connection.On<RecievedMessageEventArg>(EventNames.MessageRecieved, MessageRecieved);

@@ -12,7 +12,7 @@ public class GroupConnection : IGroupConnection
     public GroupConnection()
     {
         _connection = new HubConnectionBuilder()
-			.WithUrl($"https://localhost:7177/{HubRoutes.GroupsRoute}", (options) =>
+			.WithUrl($"{Constants.FULL_URL}/{HubRoutes.GroupsRoute}", (options) =>
             {
                 options.Headers.Add("access_token", App.AuthToken);
             })

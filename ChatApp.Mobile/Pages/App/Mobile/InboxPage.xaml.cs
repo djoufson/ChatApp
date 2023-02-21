@@ -11,9 +11,9 @@ public partial class InboxPage : ContentPage
 		InitializeComponent();
 	}
 
-	private void LoadCompleted(object sender, EventArgs e)
+	private void LoadCompleted(object sender, bool animate)
 	{
-		messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, false);
+		messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, animate);
 	}
 
 	protected override void OnAppearing()
@@ -21,4 +21,10 @@ public partial class InboxPage : ContentPage
 		base.OnAppearing();
 		_viewModel.LoadMessagesCommand.Execute(this);
 	}
+
+	private async void HandleEditorFocused(object sender, FocusEventArgs e)
+    {
+		await Task.Delay(900);
+		LoadCompleted(sender, true);
+    }
 }

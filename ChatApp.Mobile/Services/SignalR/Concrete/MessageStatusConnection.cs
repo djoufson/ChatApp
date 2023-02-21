@@ -11,7 +11,7 @@ public class MessageStatusConnection : IMessageStatusConnection
     public MessageStatusConnection()
     {
         _connection = new HubConnectionBuilder()
-            .WithUrl($"https://localhost:7177/{HubRoutes.MessageStatusRoute}", (options) =>
+            .WithUrl($"{Constants.FULL_URL}/{HubRoutes.MessageStatusRoute}", (options) =>
             {
                 options.Headers.Add("access_token", App.AuthToken);
             })

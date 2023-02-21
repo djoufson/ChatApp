@@ -17,25 +17,22 @@ public class MyClient
     /// <exception cref="TaskCanceledException"></exception>
     /// <exception cref="UriFormatException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="WebException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
     public static async Task<T> SendRequestAsync<T>(MyHttpMethods method, string url, Dictionary<string, string> content = null, string auth = null)
     {
-#if DEBUG && ANDROID
-        var devSslHelper = new DevHttpsConnectionHelper(Constants.PORT);
-        using var client = devSslHelper.HttpClient;
-        client.BaseAddress = new Uri($"{devSslHelper.DevServerRootUrl}/{Constants.BASE_URL}");
-#else
-		using var client = new HttpClient();
-        Debug.WriteLine(Constants.FULL_API_BASE_URL);
-        client.BaseAddress = new Uri(Constants.FULL_API_BASE_URL);
-#endif
+		using var client = new HttpClient()
+        {
+            BaseAddress = new Uri($"{Constants.FULL_API_BASE_URL}")
+        };
+
         JsonContent stringContent = null;
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         if (!string.IsNullOrEmpty(auth))
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth);
 
-        if (content != null)
+        if (content is not null)
             stringContent = JsonContent.Create(content);
         HttpResponseMessage httpResponseMessage = null!;
         switch (method)
@@ -47,9 +44,7 @@ public class MyClient
                     {
                         sb.Append('?');
                         foreach (var item in content)
-                        {
-                            sb.Append(item.Key + "=" + item.Value);
-                        }
+                            sb.Append($"{item.Key}={item.Value}");
 
                         url += sb.ToString();
                     }

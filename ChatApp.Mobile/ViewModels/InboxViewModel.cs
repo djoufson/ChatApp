@@ -18,7 +18,7 @@ public partial class InboxViewModel : BaseViewModel
     private readonly IGroupConnection _groupConnection;
     private readonly IMessageConnection _messageConnection;
     private readonly IOnlineStatusConnection _onlineStatusConnection;
-    public event EventHandler OnLoadCompleted;
+    public event EventHandler<bool> OnLoadCompleted;
 
     // CONSTRUCTOR
     public InboxViewModel(
@@ -54,6 +54,7 @@ public partial class InboxViewModel : BaseViewModel
             await _messageConnection.SendMessageToAsync(WithUserEmail, response.Data);
             Message = string.Empty;
             Messages.Add(response.Data);
+            Focus(true);
         }
         catch(Exception e)
         {
@@ -98,9 +99,9 @@ public partial class InboxViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private void Focus()
+    private void Focus(bool animate = false)
     {
-        OnLoadCompleted?.Invoke(this, new EventArgs());
+        OnLoadCompleted?.Invoke(this, animate);
     }
 
     // When recieving a new Message
@@ -114,6 +115,7 @@ public partial class InboxViewModel : BaseViewModel
             return;
 
         Messages.Add(e.Message);
+        Focus(true);
     }
 
     // When the connectivity status changes

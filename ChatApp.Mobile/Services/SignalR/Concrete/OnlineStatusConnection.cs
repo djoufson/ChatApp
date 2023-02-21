@@ -10,7 +10,7 @@ public class OnlineStatusConnection : IOnlineStatusConnection
     public OnlineStatusConnection()
     {
         _connection = new HubConnectionBuilder()
-            .WithUrl($"https://localhost:7177/{HubRoutes.OnlineStatusRoute}", (options) =>
+            .WithUrl($"{Constants.FULL_URL}/{HubRoutes.OnlineStatusRoute}", (options) =>
             {
                 options.Headers.Add("access_token", App.AuthToken);
             })
