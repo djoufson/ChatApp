@@ -10,6 +10,12 @@ public partial class HomePage : ContentPage
 		InitializeComponent();
 	}
 
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+		_viewModel.RefreshView();
+    }
+
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)
 	{
 		var conversation = e.Item as Conversation;

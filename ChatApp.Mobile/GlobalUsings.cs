@@ -19,6 +19,7 @@ global using Microsoft.AspNetCore.SignalR.Client;
 global using Newtonsoft.Json;
 global using System.Collections.ObjectModel;
 global using System.Diagnostics;
+global using System.Globalization;
 global using System.Net;
 global using System.Net.Http.Headers;
 global using System.Net.Http.Json;

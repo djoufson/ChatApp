@@ -1,15 +1,13 @@
-﻿using System.Globalization;
+﻿namespace ChatApp.Mobile.Converters;
 
-namespace ChatApp.Mobile.Converters;
-
-public class SenderMessageConverter : IValueConverter
+internal class SenderMessageSpecialConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is string fromUserName)
             return (fromUserName.Equals(App.UserName)) ?
-                "You" :
-                fromUserName;
+                "You : " :
+                String.Empty;
 
         return String.Empty;
     }

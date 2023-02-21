@@ -6,9 +6,11 @@ namespace ChatApp.Mobile.ViewModels;
 [QueryProperty(nameof(ConversationId), nameof(ConversationId))]
 [QueryProperty(nameof(WithUserName), nameof(WithUserName))]
 [QueryProperty(nameof(WithUserEmail), nameof(WithUserEmail))]
+[QueryProperty(nameof(Conversation), nameof(Conversation))]
 public partial class InboxViewModel : BaseViewModel
 {
     [ObservableProperty] private int _conversationId;
+    [ObservableProperty] private Conversation _conversation;
     [ObservableProperty] private string _withUserName;
     [ObservableProperty] private string _withUserEmail;
     [ObservableProperty] private string _message;
@@ -52,8 +54,9 @@ public partial class InboxViewModel : BaseViewModel
             var response = await MyClient.SendRequestAsync<BaseResponseDto<MessageWithoutEntities>>(MyHttpMethods.POST, "message", messageContent, AuthToken);
             if (response is null) return;
             await _messageConnection.SendMessageToAsync(WithUserEmail, response.Data);
-            Message = string.Empty;
+            Message = String.Empty;
             Messages.Add(response.Data);
+            Conversation.Messages.Add(response.Data);
             Focus(true);
         }
         catch(Exception e)
@@ -71,11 +74,17 @@ public partial class InboxViewModel : BaseViewModel
         try
         {
             if (string.IsNullOrEmpty(WithUserEmail))
-                response = await MyClient.SendRequestAsync<BaseResponseDto<MessageWithoutEntities[]>>(
-                    MyHttpMethods.GET, 
-                    $"conversations/{ConversationId}/messages", 
-                    null, 
-                    AuthToken);
+            {
+                //response = await MyClient.SendRequestAsync<BaseResponseDto<MessageWithoutEntities[]>>(
+                //    MyHttpMethods.GET,
+                //    $"conversations/{ConversationId}/messages",
+                //    null,
+                //    AuthToken);
+
+                foreach (var message in Conversation.Messages)
+                    Messages.Add(message);
+            }
+                
             else
                 response = await MyClient.SendRequestAsync<BaseResponseDto<MessageWithoutEntities[]>>(
                     MyHttpMethods.GET, 
@@ -115,6 +124,7 @@ public partial class InboxViewModel : BaseViewModel
             return;
 
         Messages.Add(e.Message);
+        Conversation?.OnPropertyChanged();
         Focus(true);
     }
 

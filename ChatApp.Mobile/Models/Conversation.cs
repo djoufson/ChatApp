@@ -1,7 +1,11 @@
-﻿namespace ChatApp.Mobile.Models;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public class Conversation : ConversationWithoutEntities
+namespace ChatApp.Mobile.Models;
+
+public class Conversation : ConversationWithoutEntities, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler PropertyChanged;
     public MessageWithoutEntities LastMessage => Messages?
         .OrderBy(m => m.SentAt)
         .Last();
@@ -20,7 +24,6 @@ public class Conversation : ConversationWithoutEntities
             return email1;
         }
     }
-
     public string ToUserName
     {
         get
@@ -34,5 +37,10 @@ public class Conversation : ConversationWithoutEntities
 
             return username1;
         }
+    }
+
+    public void OnPropertyChanged(string propertyName = nameof(LastMessage))
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

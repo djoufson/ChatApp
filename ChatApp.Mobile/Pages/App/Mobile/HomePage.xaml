@@ -19,7 +19,8 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:SenderMessageConverter x:Key="SenderMessageConverter"/>
+            <converters:SenderMessageSpecialConverter x:Key="SenderMessageConverter"/>
+            <converters:TimeAgoConverter x:Key="TimeAgoConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -78,8 +79,7 @@
                             </Frame>
                             <StackLayout
                                 Grid.Column="1"
-                                Margin="5,0,0,0"
-                                VerticalOptions="Center">
+                                Margin="5,0,0,0">
                                 <Label
                                     Text="{Binding ToUserName}"
                                     FontSize="16"
@@ -87,7 +87,7 @@
                                 <Label
                                     LineBreakMode="TailTruncation">
                                     <Label.Text>
-                                        <MultiBinding StringFormat="{}{0} : {1}">
+                                        <MultiBinding StringFormat="{}{0}{1}">
                                             <Binding Path="LastMessage.FromUserName" Converter="{StaticResource SenderMessageConverter}"/>
                                             <Binding Path="LastMessage.Content"/>
                                         </MultiBinding>
@@ -95,13 +95,9 @@
                                 </Label>
                             </StackLayout>
                             <StackLayout
-                                Grid.Column="2"
-                                VerticalOptions="Center">
+                                Grid.Column="2">
                                 <Label
-                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:dd-MM-yyy}'}"
-                                    HorizontalTextAlignment="End"/>
-                                <Label
-                                    Text="{Binding LastMessage.SentAt, StringFormat='{0:hh:mm}'}"
+                                    Text="{Binding LastMessage.SentAt, Converter={StaticResource TimeAgoConverter}}"
                                     HorizontalTextAlignment="End"/>
                             </StackLayout>
                         </Grid>

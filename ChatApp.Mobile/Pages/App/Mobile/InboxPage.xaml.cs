@@ -13,7 +13,8 @@ public partial class InboxPage : ContentPage
 
 	private void LoadCompleted(object sender, bool animate)
 	{
-		messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, animate);
+		if (_viewModel.Messages.Count > 2)
+			messagesList.ScrollTo(_viewModel.Messages.Count - 1, -1, ScrollToPosition.MakeVisible, animate);
 	}
 
 	protected override void OnAppearing()

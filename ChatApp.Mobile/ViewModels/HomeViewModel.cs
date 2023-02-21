@@ -36,38 +36,14 @@ public partial class HomeViewModel : BaseViewModel
             .OrderBy(c => c.LastMessage.SentAt)
             .Reverse());
     }
-
-    #region OVERRIDES
-    // When recieving a new Message
-    protected override void OnMessageRecieved(object sender, RecievedMessageEventArg e)
-    {
-        base.OnMessageRecieved(sender, e);
-        var conversation = Conversations.FirstOrDefault(c => c.ToUserEmail == e.IssuerEmail); 
-        if(conversation is null)
-        {
-            conversation = new Conversation()
-            {
-                Messages = new Collection<MessageWithoutEntities>(),
-            };
-            Conversations.Add(conversation);
-        }
-        conversation.Messages.Add(e.Message);
-        OnPropertyChanged(nameof(Conversations));
-    }
-
-    protected override void OnMessageDelivered(object sender, MessageDeliveredEventArgs e)
-    {
-        base.OnMessageDelivered(sender, e);
-    }
-    #endregion
     private async Task LoadConversationsAsync()
     {
         try
         {
             var response = await MyClient.SendRequestAsync<BaseResponseDto<IEnumerable<ConversationWithoutEntities>>>(
-                MyHttpMethods.GET, 
-                ConversationsRoute, 
-                content: null, 
+                MyHttpMethods.GET,
+                ConversationsRoute,
+                content: null,
                 AuthToken);
 
             if (response is null)
@@ -86,6 +62,37 @@ public partial class HomeViewModel : BaseViewModel
             await _displayService.DisplayAlert("Error", e.Message, "OK");
         }
     }
+    public void RefreshView()
+    {
+        foreach (var conversation in Conversations)
+            conversation.OnPropertyChanged();
+    }
+
+    #region OVERRIDES
+    // When recieving a new Message
+    protected override void OnMessageRecieved(object sender, RecievedMessageEventArg e)
+    {
+        base.OnMessageRecieved(sender, e);
+        var conversation = Conversations.FirstOrDefault(c => c.ToUserEmail == e.IssuerEmail); 
+        if(conversation is null)
+        {
+            conversation = new Conversation()
+            {
+                Messages = new Collection<MessageWithoutEntities>(),
+            };
+            Conversations.Add(conversation);
+        }
+        conversation.Messages.Add(e.Message);
+        conversation.OnPropertyChanged();
+        var index = Conversations.IndexOf(conversation);
+        Conversations.Move(index, 0);
+    }
+
+    protected override void OnMessageDelivered(object sender, MessageDeliveredEventArgs e)
+    {
+        base.OnMessageDelivered(sender, e);
+    }
+    #endregion
 
     #region COMMANDS
 
@@ -102,9 +109,9 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     private Task SelectAsync(Conversation conversation)
     {
-        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserEmail={conversation.ToUserEmail}&WithUserName={conversation.ToUserName}");
+        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserEmail={conversation.ToUserEmail}&WithUserName={conversation.ToUserName}"
+            , new Dictionary<string, object> { { "Conversation", conversation } });
     }
-
 
     [RelayCommand]
     private Task NewMessageAsync()
