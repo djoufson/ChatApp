@@ -24,7 +24,14 @@ public class FirebaseService : FirebaseMessagingService
 	{
 		base.OnMessageReceived(message);
 		var notification = message.GetNotification();
-		ShowNotification(notification.Title, notification.Body, message.Data);
+		try
+		{
+			ShowNotification(notification.Title, notification.Body, message.Data);
+		}
+		catch(Exception e) 
+		{ 
+			Debug.WriteLine(e); 
+		}
     }
 
 	private void ShowNotification(string title, string body, IDictionary<string, string> data)
@@ -37,6 +44,7 @@ public class FirebaseService : FirebaseMessagingService
 			.SetPriority(2);
 
 		var notificationManager = NotificationManagerCompat.From(this);
-		notificationManager.Notify(MainActivity.Notification_Id, notificationBuilder.Build());
+		var notification = notificationBuilder.Build();
+		notificationManager.Notify(MainActivity.Notification_Id, notification);
 	}
 }

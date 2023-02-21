@@ -13,8 +13,8 @@ public class FirebaseAdmin : IFirebaseAdmin
         {
             notification = new 
             {
-                Title = title,
-                Body = content
+                title = title,
+                body = content
             },
             registration_ids = new List<string>{ deviceToken }
         };
