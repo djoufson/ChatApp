@@ -5,6 +5,7 @@
 [Authorize]
 public class MessageController : ControllerBase
 {
+    private readonly IFirebaseAdmin _firebaseAdmin;
     private readonly UserManager<AppUser> _userManager;
     private readonly AppDbContext _dbContext;
     private readonly IConfiguration _configuration;
@@ -14,8 +15,10 @@ public class MessageController : ControllerBase
         UserManager<AppUser> userManager,
         AppDbContext dbContext,
         IConfiguration configuration,
+        IFirebaseAdmin firebaseAdmin,
         IMapper mapper)
     {
+        _firebaseAdmin = firebaseAdmin;
         _userManager = userManager;
         _dbContext = dbContext;
         _configuration = configuration;
@@ -43,6 +46,7 @@ public class MessageController : ControllerBase
             .OrderBy(m => m.SentAt)));
     }
 
+
     [HttpPost]
     public async Task<ActionResult<MessageWithoutEntities>> SendToSingle(SendMessageDto message)
     {
@@ -62,15 +66,20 @@ public class MessageController : ControllerBase
             .Include(c => c.Messages)
             .FirstOrDefaultAsync(c => c.Participents.Contains(sender) && c.Participents.Contains(user));
 
+
         if (conversation is null)
         {
             conversation = new Conversation()
             {
                 Messages = new Collection<Message>(),
-                Participents = new Collection<AppUser>() { sender, user }
+                Participents = new Collection<AppUser>() { sender, user },
+                StartedAt = DateTime.Now
             };
             _dbContext.Conversations.Add(conversation);
         }
+
+        // We increment tu number of unread messages
+        conversation.UnreadMessagesCount += 1;
         var messageEntity = new Message()
         {
             FromUserId = sender.Id,
@@ -87,7 +96,8 @@ public class MessageController : ControllerBase
         conversation.Messages ??= new Collection<Message>();
         conversation.Messages.Add(messageEntity);
         var messsageDto = messageEntity.WithoutEntities(_mapper);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
+        await _firebaseAdmin.PushAsync(user.DeviceToken!, user.UserName, message.Content, null!);
         return Ok(MyOk(messsageDto));
     }
 }

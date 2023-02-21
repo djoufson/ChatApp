@@ -35,29 +35,6 @@ public class GroupConnection : IGroupConnection
         _connection.On<GroupLeftEventArgs>(EventNames.GroupLeft, GroupLeft);
     }
 
-    #region EVENT HANDLERS
-    private void GroupJoined(GroupJoinedEventArg e)
-    {
-        OnGroupJoined?.Invoke(this, e);
-    }
-
-    private void AddedToGroup(AddedToGroupEventArgs e)
-    {
-        OnAddedToGroupEventArgs?.Invoke(this, e);
-    }
-
-    private void RemovedFromGroup(RemovedFromGroupEventArgs e)
-    {
-        OnRemovedFromGroup?.Invoke(this, e);
-    }
-
-    private void GroupLeft(GroupLeftEventArgs e)
-    {
-        OnGroupLeft?.Invoke(this, e);
-    }
-
-    #endregion
-
     #region PUBLIC INTERFACE
     public Task AddToGroupAsync(int groupId, string email)
     {
@@ -93,5 +70,28 @@ public class GroupConnection : IGroupConnection
     {
         return _connection.StopAsync();
     }
+    #endregion
+
+    #region EVENT HANDLERS
+    private void GroupJoined(GroupJoinedEventArg e)
+    {
+        OnGroupJoined?.Invoke(this, e);
+    }
+
+    private void AddedToGroup(AddedToGroupEventArgs e)
+    {
+        OnAddedToGroupEventArgs?.Invoke(this, e);
+    }
+
+    private void RemovedFromGroup(RemovedFromGroupEventArgs e)
+    {
+        OnRemovedFromGroup?.Invoke(this, e);
+    }
+
+    private void GroupLeft(GroupLeftEventArgs e)
+    {
+        OnGroupLeft?.Invoke(this, e);
+    }
+
     #endregion
 }

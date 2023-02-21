@@ -13,13 +13,13 @@ public partial class BaseViewModel : ObservableObject
     public static string ConversationsRoute => Constants.CONVERSATIONS_ROUTE;
     public static string AuthToken 
     {
-        get => Preferences.Get(Constants.AUTH_TOKEN_KEY, "");
+        get => Preferences.Get(Constants.AUTH_TOKEN_KEY, String.Empty);
         set => Preferences.Set(Constants.AUTH_TOKEN_KEY, value); 
     }
 
     public static string DeviceToken 
     {
-        get => Preferences.Get(Constants.DEVICE_TOKEN_KEY, "");
+        get => Preferences.Get(Constants.DEVICE_TOKEN_KEY, String.Empty);
         set => Preferences.Set(Constants.DEVICE_TOKEN_KEY, value);
     }
 

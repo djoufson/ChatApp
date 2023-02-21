@@ -114,7 +114,7 @@ public class GroupController : ControllerBase
 
         await _dbContext.AddAsync(group);
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return Ok(MyOk(group.WithoutEntities(_mapper)));
     }
@@ -138,7 +138,7 @@ public class GroupController : ControllerBase
             group.Members.Add(users[i]);
         }
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return Ok(MyOk(group.WithoutEntities(_mapper)));
     }

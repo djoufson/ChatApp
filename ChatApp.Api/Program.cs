@@ -19,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Add AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// Add DbContexts
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDatabase"));
@@ -29,9 +30,12 @@ builder.Services.AddDbContext<CacheContext>(options =>
     options.UseInMemoryDatabase("Cache");
 });
 
+// Register services
 builder.Services
     .AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddScoped<IFirebaseAdmin, FirebaseAdmin>();
 
 // Add Controllers
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>

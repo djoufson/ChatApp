@@ -19,8 +19,10 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:SenderMessageSpecialConverter x:Key="SenderMessageConverter"/>
             <converters:TimeAgoConverter x:Key="TimeAgoConverter"/>
+            <converters:SenderMessageSpecialConverter x:Key="SenderMessageConverter"/>
+            <converters:UnreadMessageCountConverter x:Key="UnreadMessageCountConverter"/>
+            <converters:IsUnreadTagVisible x:Key="IsUnreadTagVisible"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -99,6 +101,21 @@
                                 <Label
                                     Text="{Binding LastMessage.SentAt, Converter={StaticResource TimeAgoConverter}}"
                                     HorizontalTextAlignment="End"/>
+                                <Frame
+                                    HorizontalOptions="End"
+                                    CornerRadius="100"
+                                    WidthRequest="12"
+                                    HeightRequest="12"
+                                    Padding="0"
+                                    BorderColor="Transparent"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    IsVisible="{Binding ., Converter={StaticResource IsUnreadTagVisible}, Mode=OneWay}">
+                                    <Label
+                                        Text="{Binding ., Converter={StaticResource UnreadMessageCountConverter}, Mode=OneWay}"
+                                        TextColor="{StaticResource White}"
+                                        VerticalTextAlignment="Center"
+                                        HorizontalTextAlignment="Center"/>
+                                </Frame>
                             </StackLayout>
                         </Grid>
                     </ViewCell>

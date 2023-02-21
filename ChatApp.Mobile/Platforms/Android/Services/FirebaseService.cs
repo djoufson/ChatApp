@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using AndroidX.Core.App;
 using Firebase.Messaging;
 
 namespace ChatApp.Mobile.Platforms.Android.Services;
@@ -16,5 +17,26 @@ public class FirebaseService : FirebaseMessagingService
 	{
 		base.OnNewToken(token);
 		Preferences.Set(Utilities.Constants.DEVICE_TOKEN_KEY, token);
+		Debug.WriteLine(Preferences.Get(Utilities.Constants.DEVICE_TOKEN_KEY, ""));
+	}
+
+	public override void OnMessageReceived(RemoteMessage message)
+	{
+		base.OnMessageReceived(message);
+		var notification = message.GetNotification();
+		ShowNotification(notification.Title, notification.Body, message.Data);
+    }
+
+	private void ShowNotification(string title, string body, IDictionary<string, string> data)
+	{
+		var notificationBuilder = new NotificationCompat.Builder(this, MainActivity.Channel_Id)
+			.SetContentTitle(title)
+			.SetSmallIcon(Resource.Mipmap.appicon)
+			.SetContentText(body)
+			.SetChannelId(MainActivity.Channel_Id)
+			.SetPriority(2);
+
+		var notificationManager = NotificationManagerCompat.From(this);
+		notificationManager.Notify(MainActivity.Notification_Id, notificationBuilder.Build());
 	}
 }

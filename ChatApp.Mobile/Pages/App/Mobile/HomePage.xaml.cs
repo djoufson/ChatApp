@@ -13,7 +13,7 @@ public partial class HomePage : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		_viewModel.RefreshView();
+		_viewModel.UpdateView();
     }
 
 	private async void ConversationTapped(object sender, ItemTappedEventArgs e)

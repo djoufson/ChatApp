@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ChatApp.Mobile.ViewModels"
              x:DataType="vm:LoginViewModel"
-             x:Class="ChatApp.Mobile.Pages.App.Mobile.LoginPage"
-             Title="LoginPage">
+             Shell.NavBarIsVisible="False"
+             x:Class="ChatApp.Mobile.Pages.App.Mobile.LoginPage">
     <StackLayout
         VerticalOptions="CenterAndExpand"
         Spacing="45"

@@ -17,4 +17,17 @@ public static class ConversationExtensions
     {
         return mapper.Map<ConversationDto>(self);
     }
+
+    public static Conversation[] Sort(this Conversation[] self)
+    {
+        var list = self.ToList();
+        list.Sort((c1, c2) => 
+        {
+            var last1 = c1.Messages?.Last();
+            var last2 = c2.Messages?.Last();
+            return (last1!.SentAt < last2!.SentAt) ? 1 : 0;
+        });
+        
+        return list.ToArray();
+    }
 }

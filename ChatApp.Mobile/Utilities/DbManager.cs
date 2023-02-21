@@ -8,6 +8,8 @@ public class DbManager
     }
     public static void ClearPreferences()
     {
-        Preferences.Clear();
+        Preferences.Remove(Constants.AUTH_TOKEN_KEY);
+        Preferences.Remove(Constants.USER_EMAIL_KEY);
+        Preferences.Remove(Constants.USERNAME_KEY);
     }
 }

@@ -151,7 +151,7 @@ public class AccountController : ControllerBase
             }
 
             user.DeviceToken = updateInfos.DeviceToken;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return Ok(MyOk(user.WithoutEntities(_mapper)));
         }
         catch (Exception e)

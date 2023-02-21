@@ -62,10 +62,13 @@ public partial class HomeViewModel : BaseViewModel
             await _displayService.DisplayAlert("Error", e.Message, "OK");
         }
     }
-    public void RefreshView()
+    public async void UpdateView()
     {
+        var tasks = new List<Task>();
         foreach (var conversation in Conversations)
-            conversation.OnPropertyChanged();
+            tasks.Add(Task.Run(() => conversation.OnPropertyChanged()));
+
+        await Task.WhenAll(tasks);
     }
 
     #region OVERRIDES
@@ -101,15 +104,23 @@ public partial class HomeViewModel : BaseViewModel
     {
         IsRefreshing = true;
         await LoadConversationsAsync();
-        SortConversations();
+        //SortConversations();
         IsRefreshing = false;
     }
 
 
     [RelayCommand]
-    private Task SelectAsync(Conversation conversation)
+    private async Task SelectAsync(Conversation conversation)
     {
-        return _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserEmail={conversation.ToUserEmail}&WithUserName={conversation.ToUserName}"
+        if (conversation.LastMessage.ToUserName == App.UserName)
+        {
+            try
+            {
+                await MyClient.SendRequestAsync<BaseResponseDto>(MyHttpMethods.PUT, $"conversations/{conversation.Id}", null, AuthToken);
+            }
+            catch(Exception) { }
+        }
+        await _shell.GoToAsync($"{nameof(InboxPage)}?ConversationId={conversation.Id}&WithUserEmail={conversation.ToUserEmail}&WithUserName={conversation.ToUserName}"
             , new Dictionary<string, object> { { "Conversation", conversation } });
     }
 

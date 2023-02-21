@@ -31,3 +31,5 @@ global using System.Security.Claims;
 global using System.Text;
 global using static ChatApp.Api.Dtos.Responses.Handlers;
 global using static ChatApp.Api.Utilities.Authentication.Auth;
+global using ChatApp.Api.Services;
+global using System.Net.Http.Headers;

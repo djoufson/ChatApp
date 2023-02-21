@@ -7,4 +7,5 @@ public class Conversation
     [Range(1, 2), Required]
     public ICollection<AppUser> Participents { get; set; } = null!;
     public ICollection<Message>? Messages { get; set; } = null!;
+    public int UnreadMessagesCount { get; set; }
 }

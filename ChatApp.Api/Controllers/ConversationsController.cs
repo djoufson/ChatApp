@@ -39,6 +39,8 @@ public class ConversationsController : ControllerBase
             .Include(c => c.Messages)
             .Where(c => c.Participents.Contains(user)).ToArrayAsync();
 
+        conversations = conversations
+            .Sort();
         var conversationsDto = _mapper.Map<ConversationDto[]>(conversations);
         return Ok(MyOk(_mapper.Map<ConversationWithoutEntities[]>(conversationsDto)));
     }
@@ -71,6 +73,7 @@ public class ConversationsController : ControllerBase
         return Ok(MyOk(_mapper.Map<MessageWithoutEntities[]>(messagesDto)));
     }
 
+
     [HttpGet]
     [Route("{id:int}/messages")]
     public async Task<ActionResult> GetMessagesFromACOnversation(int id)
@@ -80,4 +83,18 @@ public class ConversationsController : ControllerBase
         
         return Ok(MyOk(_mapper.Map<MessageWithoutEntities[]>(messagesDto)));
     }
+
+
+    [HttpPut]
+    [Route("{id:int}")]
+    public async Task<ActionResult> UpdateUnreadMessagesCount(int id)
+    {
+        // Retrieve the Conversation
+        var conversation = await _dbContext.Conversations.FirstOrDefaultAsync(c => c.Id == id);
+
+        if(conversation is null) return BadRequest(MyBadRequest("Bad Request", "The specified conversation id does not exist"));
+        conversation.UnreadMessagesCount = 0;
+        await _dbContext.SaveChangesAsync();
+        return Ok(MyOk("Updated Succcesfully"));
+    } 
 }
